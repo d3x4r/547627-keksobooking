@@ -77,7 +77,7 @@ var getRandomArbitary = function (min, max) {
 
 var avatarRandom = getRandomArray(avatarlist, arrayLength);
 var titleListRandom = getRandomArray(titleList, arrayLength);
-var randomPrice = getRandomArbitary(MIN_PRICE, MAX_PRICE);
+// var randomPrice = getRandomArbitary(MIN_PRICE, MAX_PRICE);
 var randomType = typeList[getRandomArbitary(0, typeList.length - 1)];
 var rooms = getRandomArbitary(1, 5);
 var checkTime = checkTimeList[getRandomArbitary(0, checkTimeList.length - 1)];
@@ -86,36 +86,73 @@ var randomFeaturesNumber = getRandomArbitary(0, randomFeatures.length);
 var randomPhotos = getRandomArray(photosList, photosList.length);
 
 var getAdList = function (arrayValue) {
-  var adObject = {};
-  adObject.author = {};
-  adObject.offer = {};
-  adObject.location = {};
+  // var adObject = {};
+  // adObject.author = {};
+  // adObject.offer = {};
+  // adObject.location = {};
   var adList = [];
   for (var i = 0; i < arrayValue; i++) {
-    adObject.author.avatar = avatarRandom[0];
-
-    adObject.offer.title = titleListRandom[0];
-    adObject.offer.adress = '600, 350';
-    adObject.offer.address = '';
-    adObject.offer.price = randomPrice;
-    adObject.offer.type = randomType;
-    adObject.offer.rooms = rooms;
-    adObject.offer.guests = rooms * 2;
-    adObject.offer.checkin = checkTime;
-    adObject.offer.checkout = checkTime;
-    adObject.offer.features = '';
-    for (var j = 0; j < randomFeaturesNumber; j++) {
-      adObject.offer.features += randomFeatures[j] + ' ';
-    }
-    adObject.offer.description = '';
-    adObject.offer.photos = randomPhotos;
-
-    adObject.location.x = 500;
-    adObject.location.y = 200;
+    var adObject = {};
+    adObject.author = {};
+    adObject.offer = {};
+    adObject.location = {};
     adList.push(adObject);
+    adList[i].author.avatar = avatarRandom[i];
+    adList[i].offer.title = titleListRandom[i];
+    adList[i].offer.adress = '600, 350';
+    adList[i].offer.address = '';
+    adList[i].offer.price = getRandomArbitary(MIN_PRICE, MAX_PRICE);
+    adList[i].offer.type = randomType;
+    adList[i].offer.rooms = rooms;
+    adList[i].offer.guests = rooms * 2;
+    adList[i].offer.checkin = checkTime;
+    adList[i].offer.checkout = checkTime;
+    adList[i].offer.features = '';
+    for (var j = 0; j < randomFeaturesNumber; j++) {
+      adList[i].offer.features += randomFeatures[j] + ' ';
+    }
+    adList[i].offer.description = '';
+    adList[i].offer.photos = randomPhotos;
+
+    adList[i].location.x = 500;
+    adList[i].location.y = 200;
+
+    // adList[i] = adObject;
   }
   return adList;
+  // return adObject;
 };
 
+// var xxx = getAdList(arrayLength);
+// console.log(xxx);
+// var arg = [];
+// var obj = {};
+
+// for (var i = 0; i < 5; i++) {
+//   var obj = {};
+//   arg.push(obj);
+//   arg[i].key = i;
+//   console.log(arg[i].key);
+// }
+// console.log(obj);
+// console.log(arg);
+// for (var i = 0; i < arrayLength; i++) {
+//   adList[i] =
+// }
 var addFullList = getAdList(arrayLength);
-console.log(addFullList);
+// console.log(addFullList);
+
+var mapPinList = document.querySelector('.map__pins');
+var mapPinTemplate = document.querySelector('#pin')
+    .content
+    .querySelector('.map__pin');
+
+for (var i = 0; i < 8; i++) {
+  var mapPinElement = mapPinTemplate.cloneNode(true);
+  mapPinElement.setAttribute('alt', addFullList[i].offer.title);
+  // mapPinElement.setAttribute('style', addFullList[i].offer.title);
+  var img = mapPinElement.querySelector('img');
+  // mapPinElement.src = addFullList[i].author.avatar;
+  img.setAttribute('src', addFullList[i].author.avatar);
+  mapPinList.appendChild(mapPinElement);
+}
