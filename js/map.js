@@ -6,13 +6,31 @@ var MAX_PRICE = 1000000;
 // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
 var arrayLength = 8;
 
-// Временное решение для удаления классов в разметке
-var removeClass = function (targetNameClass, removeNameClass) {
-  var targetClass = document.querySelector(targetNameClass);
-  targetClass.classList.remove(removeNameClass);
+var adForm = document.querySelector('.ad-form');
+var mapForm = document.querySelector('.map__filters');
+
+// Массивы со всеми элементами форм для того что бы контролировать активное состояние
+var adFormElements = adForm.querySelectorAll('fieldset');
+var mapFormElements = mapForm.querySelectorAll('select');
+
+
+// Неактивное состояние формы
+var getDisabledElements = function (formElements) {
+  for (var i = 0; i < formElements.length; i++) {
+    formElements[i].disabled = true;
+  }
 };
 
-removeClass('.map', 'map--faded');
+getDisabledElements(adFormElements);
+getDisabledElements(mapFormElements);
+
+// Временное решение для удаления классов в разметке
+// var removeClass = function (targetNameClass, removeNameClass) {
+//   var targetClass = document.querySelector(targetNameClass);
+//   targetClass.classList.remove(removeNameClass);
+// };
+
+// removeClass('.map', 'map--faded');
 
 // Генерация упорядоченного массива с аватарами пользователей
 var getAvatarList = function (avatarCount) {
@@ -165,7 +183,8 @@ var pinAdd = function (advertisingsTotal, pinCount) {
   mapPinList.appendChild(pinFragment);
 };
 
-pinAdd(totalAdvertisings, arrayLength);
+// Вывод меток на карту
+// pinAdd(totalAdvertisings, arrayLength);
 
 // Поиск в разметке карты обьявлений
 var map = document.querySelector('.map');
@@ -235,4 +254,5 @@ var addDescription = function (totalAd) {
   map.appendChild(mapFragment);
 };
 
-addDescription(totalAdvertisings[0]);
+// вывод похожего обьявления
+// addDescription(totalAdvertisings[0]);
