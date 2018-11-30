@@ -2,6 +2,8 @@
 
 var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
 // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
 var arrayLength = 8;
@@ -113,6 +115,17 @@ var getRandomLengthArr = function (Array, number) {
     randomLengths.push(Array[i]);
   }
   return randomLengths;
+};
+
+// Функция перемешивания массива в случайном порядке
+var shuffleArray = function (array) {
+  for (var i = 0; i < array.length; i++) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
 };
 
 // Фунция для создания массива arrayValue-длинны, состоящего из сгенерированных обьектов
@@ -235,10 +248,14 @@ var addDescription = function (totalAd) {
 
   // Удаление дочерних элементов блока popup__photos в разметке с целью добавления сгенерированных данных
   photosContainer.innerHTML = '';
+
+  // Перемешивание массива с фото в случайном порядке
+  var shufflePhotos = shuffleArray(totalAd.offer.photos);
+
   // Добавление в разметку в блок popup__photos сгенерированных элементов
   for (var k = 0; k < totalAd.offer.photos.length; k++) {
     var photo = photosContent.cloneNode();
-    photo.src = totalAd.offer.photos[k];
+    photo.src = shufflePhotos[k];
     photosContainer.appendChild(photo);
   }
 
@@ -263,6 +280,8 @@ var mainPinY = mainPin.offsetLeft + 32;
 // Добавление адресса в форму на основе координат главной метки
 var adressInput = document.querySelector('[name="address"]');
 adressInput.value = mainPinY + ',' + mainPinX;
+// Блокировка ввода данных в инпут адресса от пользователя
+adressInput.disabled = true;
 
 // Функция добавления странице активного состояния, срабатывает один раз
 var activatePage = function () {
@@ -294,14 +313,13 @@ mainPin.addEventListener('click', function () {
       }
       addDescription(advertising);
 
+      // Отслеживание кнопик закрытие описания и его закрытие при клике
       var closeDescriptionButton = map.querySelector('.popup__close');
-
       closeDescriptionButton.addEventListener('click', function () {
-        var pinDescription = map.querySelector('.map__card');
-        map.removeChild(pinDescription);
+        var mapCard = map.querySelector('.map__card');
+        map.removeChild(mapCard);
       });
     });
-
   };
 
   for (var i = 0; i < usersPins.length; i++) {
@@ -309,7 +327,18 @@ mainPin.addEventListener('click', function () {
   }
 });
 
-// var closeDescription = map.querySelector('.popup__close');
-// closeDescription.addEventListener('click', function () {
-//   removeDescription();
-// });
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activatePage();
+  }
+});
+
+// Отслеживание и закрытие описания обьявления по клавише esc
+document.addEventListener('keydown', function (evt) {
+  var mapCard = map.querySelector('.map__card');
+  if (mapCard) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      map.removeChild(mapCard);
+    }
+  }
+});
