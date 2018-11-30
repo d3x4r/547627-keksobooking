@@ -2,17 +2,40 @@
 
 var MIN_PRICE = 1000;
 var MAX_PRICE = 1000000;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+
+var PRICE_BUNGALO = 0;
+var PRICE_FLAT = 1000;
+var PRICE_HOUSE = 5000;
+var PRICE_PALACE = 10000;
 
 // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
 var arrayLength = 8;
 
-// Временное решение для удаления классов в разметке
+var adForm = document.querySelector('.ad-form');
+var mapForm = document.querySelector('.map__filters');
+
+// Массивы со всеми элементами форм для того что бы контролировать активное состояние
+var adFormElements = adForm.querySelectorAll('fieldset');
+var mapFormElements = mapForm.querySelectorAll('select');
+
+
+// Cостояние формы
+var getDisabledElements = function (formElements, status) {
+  for (var i = 0; i < formElements.length; i++) {
+    formElements[i].disabled = status;
+  }
+};
+
+getDisabledElements(adFormElements, true);
+getDisabledElements(mapFormElements, true);
+
+// Удаление классов в разметке
 var removeClass = function (targetNameClass, removeNameClass) {
   var targetClass = document.querySelector(targetNameClass);
   targetClass.classList.remove(removeNameClass);
 };
-
-removeClass('.map', 'map--faded');
 
 // Генерация упорядоченного массива с аватарами пользователей
 var getAvatarList = function (avatarCount) {
@@ -99,6 +122,17 @@ var getRandomLengthArr = function (Array, number) {
   return randomLengths;
 };
 
+// Функция перемешивания массива в случайном порядке
+var shuffleArray = function (array) {
+  for (var i = 0; i < array.length; i++) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+};
+
 // Фунция для создания массива arrayValue-длинны, состоящего из сгенерированных обьектов
 var getAdList = function (arrayValue) {
 
@@ -156,6 +190,7 @@ var pinAdd = function (advertisingsTotal, pinCount) {
   var pinFragment = document.createDocumentFragment();
   for (var i = 0; i < pinCount; i++) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
+    mapPinElement.classList.add('map__pin--users');
     mapPinElement.setAttribute('alt', advertisingsTotal[i].offer.title);
     mapPinElement.setAttribute('style', 'left:' + advertisingsTotal[i].location.x + 'px;' + 'top:' + advertisingsTotal[i].location.y + 'px;');
     var img = mapPinElement.querySelector('img');
@@ -164,8 +199,6 @@ var pinAdd = function (advertisingsTotal, pinCount) {
   }
   mapPinList.appendChild(pinFragment);
 };
-
-pinAdd(totalAdvertisings, arrayLength);
 
 // Поиск в разметке карты обьявлений
 var map = document.querySelector('.map');
@@ -220,10 +253,14 @@ var addDescription = function (totalAd) {
 
   // Удаление дочерних элементов блока popup__photos в разметке с целью добавления сгенерированных данных
   photosContainer.innerHTML = '';
+
+  // Перемешивание массива с фото в случайном порядке
+  var shufflePhotos = shuffleArray(totalAd.offer.photos);
+
   // Добавление в разметку в блок popup__photos сгенерированных элементов
   for (var k = 0; k < totalAd.offer.photos.length; k++) {
     var photo = photosContent.cloneNode();
-    photo.src = totalAd.offer.photos[k];
+    photo.src = shufflePhotos[k];
     photosContainer.appendChild(photo);
   }
 
@@ -235,4 +272,113 @@ var addDescription = function (totalAd) {
   map.appendChild(mapFragment);
 };
 
-addDescription(totalAdvertisings[0]);
+// вывод похожего обьявления
+// addDescription(totalAdvertisings[0]);
+
+// Главная метка на карте
+var mainPin = document.querySelector('.map__pin--main');
+
+// Определение координат главной метки с учетом габаритов самой метки
+var mainPinX = mainPin.offsetTop + 84;
+var mainPinY = mainPin.offsetLeft + 32;
+
+// Добавление адресса в форму на основе координат главной метки
+var adressInput = document.querySelector('[name="address"]');
+adressInput.value = mainPinY + ',' + mainPinX;
+// Блокировка ввода данных в инпут адресса от пользователя
+adressInput.disabled = true;
+
+// Функция добавления странице активного состояния, срабатывает один раз
+var activatePage = function () {
+  getDisabledElements(adFormElements, false);
+  getDisabledElements(mapFormElements, false);
+  removeClass('.map', 'map--faded');
+  removeClass('.ad-form', 'ad-form--disabled');
+  pinAdd(totalAdvertisings, arrayLength);
+  mainPin.removeEventListener('mouseup', activatePage);
+};
+
+// Ослеживание клика на главной метке на карте для перевода страницы в активное состояние
+mainPin.addEventListener('mouseup', activatePage);
+
+/* Создание массива с пользовательскими отметками на карте,
+добавление обработчика на них, и показ подробной информации текущего*/
+mainPin.addEventListener('click', function () {
+  var usersPins = document.querySelectorAll('.map__pin--users');
+
+  // По клику на пин добавляется окно с описанием, при клике на другой пин, текущее описание удаляется и открывается новое
+  var addPinDescription = function (pin, advertising) {
+    pin.addEventListener('click', function () {
+      var pinDescription = map.querySelector('.map__card');
+      var removeDescription = function () {
+        map.removeChild(pinDescription);
+      };
+      if (pinDescription) {
+        removeDescription();
+      }
+      addDescription(advertising);
+
+      // Отслеживание кнопик закрытие описания и его закрытие при клике
+      var closeDescriptionButton = map.querySelector('.popup__close');
+      closeDescriptionButton.addEventListener('click', function () {
+        var mapCard = map.querySelector('.map__card');
+        map.removeChild(mapCard);
+      });
+    });
+  };
+
+  for (var i = 0; i < usersPins.length; i++) {
+    addPinDescription(usersPins[i], totalAdvertisings[i]);
+  }
+});
+
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activatePage();
+  }
+});
+
+// Отслеживание и закрытие описания обьявления по клавише esc
+document.addEventListener('keydown', function (evt) {
+  var mapCard = map.querySelector('.map__card');
+  if (mapCard) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      map.removeChild(mapCard);
+    }
+  }
+});
+
+// Поиск полей ввода в разметке
+var type = document.getElementById('type');
+var price = document.getElementById('price');
+var timeIn = document.getElementById('timein');
+var timeOut = document.getElementById('timeout');
+
+// Добавление минимальной цены и плейсхолдера к инпуту
+var setPriceInput = function (priceInput, priceValue) {
+  priceInput.min = priceValue;
+  priceInput.placeholder = priceValue;
+};
+
+// Соотношение типа жилья с минимальной стоймостью
+type.addEventListener('input', function () {
+  if (type.value === 'bungalo') {
+    setPriceInput(price, PRICE_BUNGALO);
+  } else if (type.value === 'house') {
+    setPriceInput(price, PRICE_HOUSE);
+  } else if (type.value === 'palace') {
+    setPriceInput(price, PRICE_PALACE);
+  } else if (type.value === 'flat') {
+    setPriceInput(price, PRICE_FLAT);
+  }
+});
+
+// Синхронизация времени заезда и выезда
+var timeSyncInputs = function (inputFirst, inputSecond) {
+  inputFirst.addEventListener('input', function () {
+    inputSecond.value = inputFirst.value;
+  });
+};
+timeSyncInputs(timeIn, timeOut);
+timeSyncInputs(timeOut, timeIn);
+
