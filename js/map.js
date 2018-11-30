@@ -14,23 +14,21 @@ var adFormElements = adForm.querySelectorAll('fieldset');
 var mapFormElements = mapForm.querySelectorAll('select');
 
 
-// Неактивное состояние формы
-var getDisabledElements = function (formElements) {
+// Cостояние формы
+var getDisabledElements = function (formElements, status) {
   for (var i = 0; i < formElements.length; i++) {
-    formElements[i].disabled = true;
+    formElements[i].disabled = status;
   }
 };
 
-getDisabledElements(adFormElements);
-getDisabledElements(mapFormElements);
+getDisabledElements(adFormElements, true);
+getDisabledElements(mapFormElements, true);
 
-// Временное решение для удаления классов в разметке
-// var removeClass = function (targetNameClass, removeNameClass) {
-//   var targetClass = document.querySelector(targetNameClass);
-//   targetClass.classList.remove(removeNameClass);
-// };
-
-// removeClass('.map', 'map--faded');
+// Удаление классов в разметке
+var removeClass = function (targetNameClass, removeNameClass) {
+  var targetClass = document.querySelector(targetNameClass);
+  targetClass.classList.remove(removeNameClass);
+};
 
 // Генерация упорядоченного массива с аватарами пользователей
 var getAvatarList = function (avatarCount) {
@@ -174,6 +172,7 @@ var pinAdd = function (advertisingsTotal, pinCount) {
   var pinFragment = document.createDocumentFragment();
   for (var i = 0; i < pinCount; i++) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
+    mapPinElement.classList.add('map__pin--users');
     mapPinElement.setAttribute('alt', advertisingsTotal[i].offer.title);
     mapPinElement.setAttribute('style', 'left:' + advertisingsTotal[i].location.x + 'px;' + 'top:' + advertisingsTotal[i].location.y + 'px;');
     var img = mapPinElement.querySelector('img');
@@ -182,9 +181,6 @@ var pinAdd = function (advertisingsTotal, pinCount) {
   }
   mapPinList.appendChild(pinFragment);
 };
-
-// Вывод меток на карту
-// pinAdd(totalAdvertisings, arrayLength);
 
 // Поиск в разметке карты обьявлений
 var map = document.querySelector('.map');
@@ -256,3 +252,64 @@ var addDescription = function (totalAd) {
 
 // вывод похожего обьявления
 // addDescription(totalAdvertisings[0]);
+
+// Главная метка на карте
+var mainPin = document.querySelector('.map__pin--main');
+
+// Определение координат главной метки с учетом габаритов самой метки
+var mainPinX = mainPin.offsetTop + 84;
+var mainPinY = mainPin.offsetLeft + 32;
+
+// Добавление адресса в форму на основе координат главной метки
+var adressInput = document.querySelector('[name="address"]');
+adressInput.value = mainPinY + ',' + mainPinX;
+
+// Функция добавления странице активного состояния, срабатывает один раз
+var activatePage = function () {
+  getDisabledElements(adFormElements, false);
+  getDisabledElements(mapFormElements, false);
+  removeClass('.map', 'map--faded');
+  removeClass('.ad-form', 'ad-form--disabled');
+  pinAdd(totalAdvertisings, arrayLength);
+  mainPin.removeEventListener('mouseup', activatePage);
+};
+
+// Ослеживание клика на главной метке на карте для перевода страницы в активное состояние
+mainPin.addEventListener('mouseup', activatePage);
+
+/* Создание массива с пользовательскими отметками на карте,
+добавление обработчика на них, и показ подробной информации текущего*/
+mainPin.addEventListener('click', function () {
+  var usersPins = document.querySelectorAll('.map__pin--users');
+
+  // По клику на пин добавляется окно с описанием, при клике на другой пин, текущее описание удаляется и открывается новое
+  var addPinDescription = function (pin, advertising) {
+    pin.addEventListener('click', function () {
+      var pinDescription = map.querySelector('.map__card');
+      var removeDescription = function () {
+        map.removeChild(pinDescription);
+      };
+      if (pinDescription) {
+        removeDescription();
+      }
+      addDescription(advertising);
+
+      var closeDescriptionButton = map.querySelector('.popup__close');
+
+      closeDescriptionButton.addEventListener('click', function () {
+        var pinDescription = map.querySelector('.map__card');
+        map.removeChild(pinDescription);
+      });
+    });
+
+  };
+
+  for (var i = 0; i < usersPins.length; i++) {
+    addPinDescription(usersPins[i], totalAdvertisings[i]);
+  }
+});
+
+// var closeDescription = map.querySelector('.popup__close');
+// closeDescription.addEventListener('click', function () {
+//   removeDescription();
+// });
