@@ -286,7 +286,8 @@ var mainPinY = mainPin.offsetLeft + 32;
 var adressInput = document.querySelector('[name="address"]');
 adressInput.value = mainPinY + ',' + mainPinX;
 // Блокировка ввода данных в инпут адресса от пользователя
-adressInput.disabled = true;
+// adressInput.disabled = true;
+adressInput.readOnly = true;
 
 // Функция добавления странице активного состояния, срабатывает один раз
 var activatePage = function () {
@@ -353,6 +354,8 @@ var type = document.getElementById('type');
 var price = document.getElementById('price');
 var timeIn = document.getElementById('timein');
 var timeOut = document.getElementById('timeout');
+var roomNumber = document.getElementById('room_number');
+var capacity = document.getElementById('capacity');
 
 // Добавление минимальной цены и плейсхолдера к инпуту
 var setPriceInput = function (priceInput, priceValue) {
@@ -381,4 +384,24 @@ var timeSyncInputs = function (inputFirst, inputSecond) {
 };
 timeSyncInputs(timeIn, timeOut);
 timeSyncInputs(timeOut, timeIn);
+
+// Функция синхронизация гостей и комнат
+var guestSync = function (targetInput) {
+  targetInput.addEventListener('input', function () {
+    var capacityInt = parseInt(capacity.value, 10);
+    var roomInt = parseInt(roomNumber.value, 10);
+    if (capacityInt > roomInt && capacityInt > 0) {
+      targetInput.setCustomValidity('Количество гостей не должно превышать количество комнат');
+    } else if (roomInt === 100 && capacityInt > 0) {
+      targetInput.setCustomValidity('100 комнат сдается не для гостей');
+    } else if (roomInt !== 100 && capacityInt === 0) {
+      targetInput.setCustomValidity('Выбирете количество гостей');
+    } else {
+      targetInput.setCustomValidity('');
+    }
+  });
+};
+
+guestSync(roomNumber);
+guestSync(capacity);
 
