@@ -5,6 +5,11 @@ var MAX_PRICE = 1000000;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
+var PRICE_BUNGALO = 0;
+var PRICE_FLAT = 1000;
+var PRICE_HOUSE = 5000;
+var PRICE_PALACE = 10000;
+
 // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
 var arrayLength = 8;
 
@@ -342,3 +347,38 @@ document.addEventListener('keydown', function (evt) {
     }
   }
 });
+
+// Поиск полей ввода в разметке
+var type = document.getElementById('type');
+var price = document.getElementById('price');
+var timeIn = document.getElementById('timein');
+var timeOut = document.getElementById('timeout');
+
+// Добавление минимальной цены и плейсхолдера к инпуту
+var setPriceInput = function (priceInput, priceValue) {
+  priceInput.min = priceValue;
+  priceInput.placeholder = priceValue;
+};
+
+// Соотношение типа жилья с минимальной стоймостью
+type.addEventListener('input', function () {
+  if (type.value === 'bungalo') {
+    setPriceInput(price, PRICE_BUNGALO);
+  } else if (type.value === 'house') {
+    setPriceInput(price, PRICE_HOUSE);
+  } else if (type.value === 'palace') {
+    setPriceInput(price, PRICE_PALACE);
+  } else if (type.value === 'flat') {
+    setPriceInput(price, PRICE_FLAT);
+  }
+});
+
+// Синхронизация времени заезда и выезда
+var timeSyncInputs = function (inputFirst, inputSecond) {
+  inputFirst.addEventListener('input', function () {
+    inputSecond.value = inputFirst.value;
+  });
+};
+timeSyncInputs(timeIn, timeOut);
+timeSyncInputs(timeOut, timeIn);
+
