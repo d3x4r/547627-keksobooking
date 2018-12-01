@@ -386,7 +386,7 @@ timeSyncInputs(timeIn, timeOut);
 timeSyncInputs(timeOut, timeIn);
 
 // Функция синхронизация гостей и комнат
-var guestSync = function (targetInput) {
+var guestSync = function (targetInput,) {
   targetInput.addEventListener('blur', function () {
     var capacityInt = parseInt(capacity.value, 10);
     var roomInt = parseInt(roomNumber.value, 10);
@@ -397,7 +397,9 @@ var guestSync = function (targetInput) {
     } else if (roomInt !== 100 && capacityInt === 0) {
       targetInput.setCustomValidity('Выбирете количество гостей');
     } else {
-      targetInput.setCustomValidity('');
+      // targetInput.setCustomValidity('');
+      roomNumber.setCustomValidity('');
+      capacity.setCustomValidity('');
     }
   });
 };
