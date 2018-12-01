@@ -387,7 +387,7 @@ timeSyncInputs(timeOut, timeIn);
 
 // Функция синхронизация гостей и комнат
 var guestSync = function (targetInput) {
-  targetInput.addEventListener('input', function () {
+  targetInput.addEventListener('blur', function () {
     var capacityInt = parseInt(capacity.value, 10);
     var roomInt = parseInt(roomNumber.value, 10);
     if (capacityInt > roomInt && capacityInt > 0) {
