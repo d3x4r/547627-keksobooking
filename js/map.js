@@ -419,54 +419,56 @@ var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
 adForm.addEventListener('submit', function (evt) {
   evt.preventDefault();
 
-  if (adForm.contains(element)) {
-    adForm.removeChild(element);
+  if (adForm.contains(successModal)) {
+    adForm.removeChild(successModal);
   }
   adForm.appendChild(adFormSuccesWindow);
-  var element = document.querySelector('.success');
+  var successModal = document.querySelector('.success');
 
-  element.addEventListener('click', function () {
-    if (adForm.contains(element)) {
-      adForm.removeChild(element);
+  successModal.addEventListener('click', function () {
+    if (adForm.contains(successModal)) {
+      adForm.removeChild(successModal);
     }
   });
 
-  var finc = function (escEvt) {
+  var closeModalEsc = function (escEvt) {
     if (escEvt.keyCode === ESC_KEYCODE) {
-      if (adForm.contains(element)) {
-        adForm.removeChild(element);
+      if (adForm.contains(successModal)) {
+        adForm.removeChild(successModal);
       }
     }
   };
-  adForm.addEventListener('keydown', finc);
+  adForm.addEventListener('keydown', closeModalEsc);
 });
 
-// var gg = adForm.addEventListener('invalid', function () {
-//   console.log(1);
-// });
 
+// Поиск в шаблоне модального окна ошибки формы
 var adFormButton = adForm.querySelector('.ad-form__submit');
 var adFormErrorTemplate = document.querySelector('#error')
 .content
 .querySelector('.error');
 var adFormErrorWindow = adFormErrorTemplate.cloneNode(true);
 
+// Функция переберающая все инпуты и селекты в форме, и навешивающаяя на них событие проверки на валидность
 adFormButton.addEventListener('click', function () {
+  // Поиск элементов которые нуждаются в проверке
   var adFormInputs = adForm.querySelectorAll('input');
   var adFormSelect = adForm.querySelectorAll('select');
-  for (var i = 0; i < adFormInputs.length; i++) {
-    addInvalid(adFormInputs[i]);
-  }
-  for (var j = 0; j < adFormSelect.length; j++) {
-    addInvalid(adFormSelect[j]);
-  }
-
+  var addEvents = function (targetElements) {
+    for (var i = 0; i < targetElements.length; i++) {
+      addInvalid(targetElements[i]);
+    }
+  };
+  addEvents(adFormInputs);
+  addEvents(adFormSelect);
 });
 
+// Вешает на элемент событие invalid, и при его срабатывании вызывает модальное окно ошибки, которое
+// закрывается c клавиатуры и мыши
 var addInvalid = function (target) {
   target.addEventListener('invalid', function () {
     adForm.appendChild(adFormErrorWindow);
-    var errr = adForm.querySelector('.error');
+    var errorContainer = adForm.querySelector('.error');
     var errorButton = adForm.querySelector('.error__button');
     errorButton.addEventListener('click', function () {
       if (adForm.contains(errorButton)) {
@@ -474,7 +476,7 @@ var addInvalid = function (target) {
       }
     });
     document.addEventListener('keydown', function (evt) {
-      if (adForm.contains(errr)) {
+      if (adForm.contains(errorContainer)) {
         if (evt.keyCode === ESC_KEYCODE) {
           evt.preventDefault();
           adForm.removeChild(adFormErrorWindow);
