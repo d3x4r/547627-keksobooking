@@ -416,9 +416,25 @@ var adFormSuccesTemplate = document.querySelector('#success')
 adForm.addEventListener('submit', function (evt) {
   evt.preventDefault();
   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+  var element = document.querySelector('.success');
+  if (element) {
+    adForm.removeChild(element);
+  }
   adForm.appendChild(adFormSuccesWindow);
-
   adFormSuccesWindow.addEventListener('click', function () {
     adForm.removeChild(adFormSuccesWindow);
   });
 });
+
+// adForm.addEventListener('submit', function (evt) {
+//   evt.preventDefault();
+//   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+//   var element = document.querySelector('.success');
+//   if (element) {
+//     adForm.removeChild(element);
+//   }
+//   adForm.appendChild(adFormSuccesWindow);
+//   adFormSuccesWindow.addEventListener('click', function () {
+//     adForm.removeChild(adFormSuccesWindow);
+//   });
+// });
