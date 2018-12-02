@@ -409,21 +409,36 @@ guestSync(capacity);
 
 // Поиск в разметке шаблона об успешном заполнении формы
 var adFormSuccesTemplate = document.querySelector('#success')
-    .content
-    .querySelector('.success');
+.content
+.querySelector('.success');
+var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+
 
 // При вводе валидных данных в разметку добавляется окно-оверлей сообщающий об этом
+// Плюс добавлены обработчики событий при нажатии клавишы мыши и ESC
 adForm.addEventListener('submit', function (evt) {
   evt.preventDefault();
-  var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
-  var element = document.querySelector('.success');
-  if (element) {
+
+  if (adForm.contains(element)) {
     adForm.removeChild(element);
   }
   adForm.appendChild(adFormSuccesWindow);
-  adFormSuccesWindow.addEventListener('click', function () {
-    adForm.removeChild(adFormSuccesWindow);
+  var element = document.querySelector('.success');
+
+  element.addEventListener('click', function () {
+    if (adForm.contains(element)) {
+      adForm.removeChild(element);
+    }
   });
+
+  var finc = function (escEvt) {
+    if (escEvt.keyCode === ESC_KEYCODE) {
+      if (adForm.contains(element)) {
+        adForm.removeChild(element);
+      }
+    }
+  };
+  adForm.addEventListener('keydown', finc);
 });
 
 // adForm.addEventListener('submit', function (evt) {
@@ -437,4 +452,31 @@ adForm.addEventListener('submit', function (evt) {
 //   adFormSuccesWindow.addEventListener('click', function () {
 //     adForm.removeChild(adFormSuccesWindow);
 //   });
+// });
+
+// adForm.addEventListener('submit', function (evt) {
+//   evt.preventDefault();
+//   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+//   var element = document.querySelector('.success');
+
+//   if (element) {
+//     adForm.removeChild(element);
+//   }
+
+//   adForm.appendChild(adFormSuccesWindow);
+//   adFormSuccesWindow.addEventListener('click', function () {
+//     adForm.removeChild(adFormSuccesWindow);
+//   });
+
+//   var finc = function (escEvt) {
+//     if (escEvt.keyCode === ESC_KEYCODE) {
+//       adForm.removeChild(adFormSuccesWindow);
+//       document.removeEventListener('keydown', finc);
+//     }
+//   };
+
+//   if (adFormSuccesWindow) {
+//     document.addEventListener('keydown', finc);
+//   }
+
 // });
