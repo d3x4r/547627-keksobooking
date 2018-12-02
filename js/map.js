@@ -407,3 +407,18 @@ var guestSync = function (targetInput) {
 guestSync(roomNumber);
 guestSync(capacity);
 
+// Поиск в разметке шаблона об успешном заполнении формы
+var adFormSuccesTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+
+// При вводе валидных данных в разметку добавляется окно-оверлей сообщающий об этом
+adForm.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+  var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+  adForm.appendChild(adFormSuccesWindow);
+
+  adFormSuccesWindow.addEventListener('click', function () {
+    adForm.removeChild(adFormSuccesWindow);
+  });
+});
