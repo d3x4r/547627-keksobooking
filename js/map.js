@@ -441,6 +441,49 @@ adForm.addEventListener('submit', function (evt) {
   adForm.addEventListener('keydown', finc);
 });
 
+// var gg = adForm.addEventListener('invalid', function () {
+//   console.log(1);
+// });
+
+var adFormButton = adForm.querySelector('.ad-form__submit');
+var adFormErrorTemplate = document.querySelector('#error')
+.content
+.querySelector('.error');
+var adFormErrorWindow = adFormErrorTemplate.cloneNode(true);
+
+adFormButton.addEventListener('click', function () {
+  var adFormInputs = adForm.querySelectorAll('input');
+  var adFormSelect = adForm.querySelectorAll('select');
+  for (var i = 0; i < adFormInputs.length; i++) {
+    addInvalid(adFormInputs[i]);
+  }
+  for (var j = 0; j < adFormSelect.length; j++) {
+    addInvalid(adFormSelect[j]);
+  }
+
+});
+
+var addInvalid = function (target) {
+  target.addEventListener('invalid', function () {
+    adForm.appendChild(adFormErrorWindow);
+    var errr = adForm.querySelector('.error');
+    var errorButton = adForm.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      if (adForm.contains(errorButton)) {
+        adForm.removeChild(adFormErrorWindow);
+      }
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (adForm.contains(errr)) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          evt.preventDefault();
+          adForm.removeChild(adFormErrorWindow);
+        }
+      }
+    });
+  });
+};
+
 // adForm.addEventListener('submit', function (evt) {
 //   evt.preventDefault();
 //   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
