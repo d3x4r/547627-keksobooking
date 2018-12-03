@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Владислав Подъяблонский](https://up.htmlacademy.ru/javascript/16/user/547627).
-* Наставник: [Мурат Баркинхоев](https://htmlacademy.ru/profile/id186857).
+* Наставник: [Сергей Буртылёв](https://htmlacademy.ru/profile/id3341).
 
 ---
 
