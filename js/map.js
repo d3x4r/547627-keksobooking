@@ -278,15 +278,25 @@ var addDescription = function (totalAd) {
 // Главная метка на карте
 var mainPin = document.querySelector('.map__pin--main');
 
-// Определение координат главной метки с учетом габаритов самой метки
-var mainPinX = mainPin.offsetTop + 84;
-var mainPinY = mainPin.offsetLeft + 32;
+// Поиск поля ввода адреса в форме
+var adressInput = adForm.querySelector('[name="address"]');
 
-// Добавление адресса в форму на основе координат главной метки
-var adressInput = document.querySelector('[name="address"]');
-adressInput.value = mainPinY + ',' + mainPinX;
+// Константы определяющие смещение координат на основе размеров метки mainPin
+var MAIN_PIN_HEIGHT_INDEX = 84;
+var MAIN_PIN_WIDTH_INDEX = 32;
+
+// Добавление адреса в форму на основе координат главной метки
+var getCoordinatPin = function (heightIndex, widthIndex) {
+  var mainPinX = mainPin.offsetTop + heightIndex;
+  var mainPinY = mainPin.offsetLeft + widthIndex;
+  adressInput.value = mainPinY + ',' + mainPinX;
+  return adressInput.value;
+};
+
+getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+
 // Блокировка ввода данных в инпут адресса от пользователя
-adressInput.disabled = true;
+adressInput.readOnly = true;
 
 // Функция добавления странице активного состояния, срабатывает один раз
 var activatePage = function () {
@@ -295,11 +305,50 @@ var activatePage = function () {
   removeClass('.map', 'map--faded');
   removeClass('.ad-form', 'ad-form--disabled');
   pinAdd(totalAdvertisings, arrayLength);
-  mainPin.removeEventListener('mouseup', activatePage);
+  // mainPin.removeEventListener('mouseup', activatePage);
 };
 
 // Ослеживание клика на главной метке на карте для перевода страницы в активное состояние
-mainPin.addEventListener('mouseup', activatePage);
+// mainPin.addEventListener('mouseup', activatePage);
+
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  activatePage();
+
+  var startCoord = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftCoord = {
+      x: startCoord.x - moveEvt.clientX,
+      y: startCoord.y - moveEvt.clientY
+    };
+
+    startCoord = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mainPin.style.top = (mainPin.offsetTop - shiftCoord.y) + 'px';
+    mainPin.style.left = (mainPin.offsetLeft - shiftCoord.x) + 'px';
+
+    getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
 
 /* Создание массива с пользовательскими отметками на карте,
 добавление обработчика на них, и показ подробной информации текущего*/
@@ -353,6 +402,8 @@ var type = document.getElementById('type');
 var price = document.getElementById('price');
 var timeIn = document.getElementById('timein');
 var timeOut = document.getElementById('timeout');
+var roomNumber = document.getElementById('room_number');
+var capacity = document.getElementById('capacity');
 
 // Добавление минимальной цены и плейсхолдера к инпуту
 var setPriceInput = function (priceInput, priceValue) {
@@ -382,3 +433,143 @@ var timeSyncInputs = function (inputFirst, inputSecond) {
 timeSyncInputs(timeIn, timeOut);
 timeSyncInputs(timeOut, timeIn);
 
+// Функция синхронизация гостей и комнат
+var guestSync = function (targetInput) {
+  targetInput.addEventListener('blur', function () {
+    var capacityInt = parseInt(capacity.value, 10);
+    var roomInt = parseInt(roomNumber.value, 10);
+    if (capacityInt > roomInt && capacityInt > 0) {
+      targetInput.setCustomValidity('Количество гостей не должно превышать количество комнат');
+    } else if (roomInt === 100 && capacityInt > 0) {
+      targetInput.setCustomValidity('100 комнат сдается не для гостей');
+    } else if (roomInt !== 100 && capacityInt === 0) {
+      targetInput.setCustomValidity('Выбирете количество гостей');
+    } else {
+      // targetInput.setCustomValidity('');
+      roomNumber.setCustomValidity('');
+      capacity.setCustomValidity('');
+    }
+  });
+};
+
+guestSync(roomNumber);
+guestSync(capacity);
+
+// Поиск в разметке шаблона об успешном заполнении формы
+var adFormSuccesTemplate = document.querySelector('#success')
+.content
+.querySelector('.success');
+var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+
+
+// При вводе валидных данных в разметку добавляется окно-оверлей сообщающий об этом
+// Плюс добавлены обработчики событий при нажатии клавишы мыши и ESC
+adForm.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+
+  if (adForm.contains(successModal)) {
+    adForm.removeChild(successModal);
+  }
+  adForm.appendChild(adFormSuccesWindow);
+  var successModal = document.querySelector('.success');
+
+  successModal.addEventListener('click', function () {
+    if (adForm.contains(successModal)) {
+      adForm.removeChild(successModal);
+    }
+  });
+
+  var closeModalEsc = function (escEvt) {
+    if (escEvt.keyCode === ESC_KEYCODE) {
+      if (adForm.contains(successModal)) {
+        adForm.removeChild(successModal);
+      }
+    }
+  };
+  adForm.addEventListener('keydown', closeModalEsc);
+});
+
+
+// Поиск в шаблоне модального окна ошибки формы
+var adFormButton = adForm.querySelector('.ad-form__submit');
+var adFormErrorTemplate = document.querySelector('#error')
+.content
+.querySelector('.error');
+var adFormErrorWindow = adFormErrorTemplate.cloneNode(true);
+
+// Функция переберающая все инпуты и селекты в форме, и навешивающаяя на них событие проверки на валидность
+adFormButton.addEventListener('click', function () {
+  // Поиск элементов которые нуждаются в проверке
+  var adFormInputs = adForm.querySelectorAll('input');
+  var adFormSelect = adForm.querySelectorAll('select');
+  var addEvents = function (targetElements) {
+    for (var i = 0; i < targetElements.length; i++) {
+      addInvalid(targetElements[i]);
+    }
+  };
+  addEvents(adFormInputs);
+  addEvents(adFormSelect);
+});
+
+// Вешает на элемент событие invalid, и при его срабатывании вызывает модальное окно ошибки, которое
+// закрывается c клавиатуры и мыши
+var addInvalid = function (target) {
+  target.addEventListener('invalid', function () {
+    adForm.appendChild(adFormErrorWindow);
+    var errorContainer = adForm.querySelector('.error');
+    var errorButton = adForm.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      if (adForm.contains(errorButton)) {
+        adForm.removeChild(adFormErrorWindow);
+      }
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (adForm.contains(errorContainer)) {
+        if (evt.keyCode === ESC_KEYCODE) {
+          evt.preventDefault();
+          adForm.removeChild(adFormErrorWindow);
+        }
+      }
+    });
+  });
+};
+
+// adForm.addEventListener('submit', function (evt) {
+//   evt.preventDefault();
+//   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+//   var element = document.querySelector('.success');
+//   if (element) {
+//     adForm.removeChild(element);
+//   }
+//   adForm.appendChild(adFormSuccesWindow);
+//   adFormSuccesWindow.addEventListener('click', function () {
+//     adForm.removeChild(adFormSuccesWindow);
+//   });
+// });
+
+// adForm.addEventListener('submit', function (evt) {
+//   evt.preventDefault();
+//   var adFormSuccesWindow = adFormSuccesTemplate.cloneNode(true);
+//   var element = document.querySelector('.success');
+
+//   if (element) {
+//     adForm.removeChild(element);
+//   }
+
+//   adForm.appendChild(adFormSuccesWindow);
+//   adFormSuccesWindow.addEventListener('click', function () {
+//     adForm.removeChild(adFormSuccesWindow);
+//   });
+
+//   var finc = function (escEvt) {
+//     if (escEvt.keyCode === ESC_KEYCODE) {
+//       adForm.removeChild(adFormSuccesWindow);
+//       document.removeEventListener('keydown', finc);
+//     }
+//   };
+
+//   if (adFormSuccesWindow) {
+//     document.addEventListener('keydown', finc);
+//   }
+
+// });
