@@ -278,15 +278,24 @@ var addDescription = function (totalAd) {
 // Главная метка на карте
 var mainPin = document.querySelector('.map__pin--main');
 
-// Определение координат главной метки с учетом габаритов самой метки
-var mainPinX = mainPin.offsetTop + 84;
-var mainPinY = mainPin.offsetLeft + 32;
+// Поиск поля ввода адреса в форме
+var adressInput = adForm.querySelector('[name="address"]');
 
-// Добавление адресса в форму на основе координат главной метки
-var adressInput = document.querySelector('[name="address"]');
-adressInput.value = mainPinY + ',' + mainPinX;
+// Константы определяющие смещение координат на основе размеров метки mainPin
+var MAIN_PIN_HEIGHT_INDEX = 84;
+var MAIN_PIN_WIDTH_INDEX = 32;
+
+// Добавление адреса в форму на основе координат главной метки
+var getCoordinatPin = function (heightIndex, widthIndex) {
+  var mainPinX = mainPin.offsetTop + heightIndex;
+  var mainPinY = mainPin.offsetLeft + widthIndex;
+  adressInput.value = mainPinY + ',' + mainPinX;
+  return adressInput.value;
+};
+
+getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+
 // Блокировка ввода данных в инпут адресса от пользователя
-// adressInput.disabled = true;
 adressInput.readOnly = true;
 
 // Функция добавления странице активного состояния, срабатывает один раз
@@ -296,11 +305,50 @@ var activatePage = function () {
   removeClass('.map', 'map--faded');
   removeClass('.ad-form', 'ad-form--disabled');
   pinAdd(totalAdvertisings, arrayLength);
-  mainPin.removeEventListener('mouseup', activatePage);
+  // mainPin.removeEventListener('mouseup', activatePage);
 };
 
 // Ослеживание клика на главной метке на карте для перевода страницы в активное состояние
-mainPin.addEventListener('mouseup', activatePage);
+// mainPin.addEventListener('mouseup', activatePage);
+
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  activatePage();
+
+  var startCoord = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftCoord = {
+      x: startCoord.x - moveEvt.clientX,
+      y: startCoord.y - moveEvt.clientY
+    };
+
+    startCoord = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mainPin.style.top = (mainPin.offsetTop - shiftCoord.y) + 'px';
+    mainPin.style.left = (mainPin.offsetLeft - shiftCoord.x) + 'px';
+
+    getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
 
 /* Создание массива с пользовательскими отметками на карте,
 добавление обработчика на них, и показ подробной информации текущего*/
