@@ -305,36 +305,57 @@ var activatePage = function () {
   removeClass('.map', 'map--faded');
   removeClass('.ad-form', 'ad-form--disabled');
   pinAdd(totalAdvertisings, arrayLength);
-  // mainPin.removeEventListener('mouseup', activatePage);
+  mainPin.removeEventListener('mousedown', activatePage);
 };
 
-// Ослеживание клика на главной метке на карте для перевода страницы в активное состояние
-// mainPin.addEventListener('mouseup', activatePage);
+mainPin.addEventListener('mousedown', activatePage);
 
 mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
-  activatePage();
 
+  var mapOverlay = document.querySelector('.map__overlay');
   var startCoord = {
-    x: evt.clientX,
-    y: evt.clientY
+    x: evt.pageX,
+    y: evt.pageY
+  };
+
+  // Расчет минимальных и максимальных координат пина относительно родителя
+  var pinLimits = {
+    top: mapOverlay.offsetTop,
+    right: mapOverlay.offsetWidth + mapOverlay.offsetLeft - mainPin.offsetWidth,
+    bottom: mapOverlay.offsetHeight + mapOverlay.offsetTop - mainPin.offsetHeight,
+    left: mapOverlay.offsetLeft
   };
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
 
     var shiftCoord = {
-      x: startCoord.x - moveEvt.clientX,
-      y: startCoord.y - moveEvt.clientY
+      x: startCoord.x - moveEvt.pageX,
+      y: startCoord.y - moveEvt.pageY
     };
 
     startCoord = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
+      x: moveEvt.pageX,
+      y: moveEvt.pageY
     };
 
-    mainPin.style.top = (mainPin.offsetTop - shiftCoord.y) + 'px';
-    mainPin.style.left = (mainPin.offsetLeft - shiftCoord.x) + 'px';
+    // Итоговые координаты пина
+    var pinPositionX = mainPin.offsetLeft - shiftCoord.x;
+    var pinPositionY = mainPin.offsetTop - shiftCoord.y;
+    // Проверка на выход пина за пределы родителя и запрет этого
+    if (pinPositionX < pinLimits.left) {
+      pinPositionX = pinLimits.left;
+    } else if (pinPositionX > pinLimits.right) {
+      pinPositionX = pinLimits.right;
+    } else if (pinPositionY < pinLimits.top) {
+      pinPositionY = pinLimits.top;
+    } else if (pinPositionY > pinLimits.bottom) {
+      pinPositionY = pinLimits.bottom;
+    }
+
+    mainPin.style.top = pinPositionY + 'px';
+    mainPin.style.left = pinPositionX + 'px';
 
     getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
   };
