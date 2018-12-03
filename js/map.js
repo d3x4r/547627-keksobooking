@@ -282,7 +282,7 @@ var mainPin = document.querySelector('.map__pin--main');
 var adressInput = adForm.querySelector('[name="address"]');
 
 // Константы определяющие смещение координат на основе размеров метки mainPin
-var MAIN_PIN_HEIGHT_INDEX = 84;
+var MAIN_PIN_HEIGHT_INDEX = 70;
 var MAIN_PIN_WIDTH_INDEX = 32;
 
 // Добавление адреса в форму на основе координат главной метки
@@ -323,7 +323,8 @@ mainPin.addEventListener('mousedown', function (evt) {
   var pinLimits = {
     top: mapOverlay.offsetTop,
     right: mapOverlay.offsetWidth + mapOverlay.offsetLeft - mainPin.offsetWidth,
-    bottom: mapOverlay.offsetHeight + mapOverlay.offsetTop - mainPin.offsetHeight,
+    // Тут я 15 временно вкорячил потому, что вроде как адекватно ограничил значение по Y внизу, но всеравно выходит за родителя, мне показалось, что это в разметке самой ножки косяк
+    bottom: mapOverlay.offsetHeight + mapOverlay.offsetTop - mainPin.offsetHeight - 15,
     left: mapOverlay.offsetLeft
   };
 
