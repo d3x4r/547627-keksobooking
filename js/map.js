@@ -20,7 +20,6 @@ var mapForm = document.querySelector('.map__filters');
 var adFormElements = adForm.querySelectorAll('fieldset');
 var mapFormElements = mapForm.querySelectorAll('select');
 
-
 // Cостояние формы
 var getDisabledElements = function (formElements, status) {
   for (var i = 0; i < formElements.length; i++) {
@@ -30,12 +29,6 @@ var getDisabledElements = function (formElements, status) {
 
 getDisabledElements(adFormElements, true);
 getDisabledElements(mapFormElements, true);
-
-// Удаление классов в разметке
-var removeClass = function (targetNameClass, removeNameClass) {
-  var targetClass = document.querySelector(targetNameClass);
-  targetClass.classList.remove(removeNameClass);
-};
 
 // Генерация упорядоченного массива с аватарами пользователей
 var getAvatarList = function (avatarCount) {
@@ -302,8 +295,8 @@ adressInput.readOnly = true;
 var activatePage = function () {
   getDisabledElements(adFormElements, false);
   getDisabledElements(mapFormElements, false);
-  removeClass('.map', 'map--faded');
-  removeClass('.ad-form', 'ad-form--disabled');
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
   pinAdd(totalAdvertisings, arrayLength);
   mainPin.removeEventListener('mousedown', activatePage);
 };
