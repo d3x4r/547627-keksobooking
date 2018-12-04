@@ -286,17 +286,28 @@ var adressInput = adForm.querySelector('[name="address"]');
 var MAIN_PIN_HEIGHT_INDEX = 70;
 var MAIN_PIN_WIDTH_INDEX = 32;
 
-// Добавление адреса в форму на основе координат главной метки
-var getCoordinatPin = function (heightIndex, widthIndex) {
-  var mainPinX = mainPin.offsetTop + heightIndex;
-  var mainPinY = mainPin.offsetLeft + widthIndex;
-  adressInput.value = mainPinY + ',' + mainPinX;
-  return adressInput.value;
+// Координаты пина при неактивной странице
+var getInactivePinCoordinats = function () {
+  return (mainPin.offsetLeft + mainPin.offsetWidth / 2) + ',' + (mainPin.offsetTop + mainPin.offsetHeight / 2);
 };
 
-// Начальное значение поля адрес, равное координатам центра главного пина
-adressInput.value = (mainPin.offsetLeft + mainPin.offsetWidth / 2) + ',' + (mainPin.offsetTop + mainPin.offsetHeight / 2);
+// Координаты пина при активной странице
+var getActivePinCoordinat = function (heightIndex, widthIndex) {
+  var mainPinX = mainPin.offsetTop + heightIndex;
+  var mainPinY = mainPin.offsetLeft + widthIndex;
+  return mainPinY + ',' + mainPinX;
+};
 
+adressInput.value = getInactivePinCoordinats();
+
+var getCoordinat = function () {
+  var usersPin = document.querySelector('.map__pin--users');
+  if (mapPinList.contains(usersPin)) {
+    adressInput.value = getActivePinCoordinat(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+  } else {
+    adressInput.value = getInactivePinCoordinats();
+  }
+};
 // Блокировка ввода данных в инпут адресса от пользователя
 adressInput.readOnly = true;
 
@@ -360,13 +371,13 @@ mainPin.addEventListener('mousedown', function (evt) {
     mainPin.style.top = pinPositionY + 'px';
     mainPin.style.left = pinPositionX + 'px';
 
-    getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+    getCoordinat();
   };
 
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+    getCoordinat();
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
