@@ -178,8 +178,8 @@ var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-// Функция добавления сгенерированных меток в разметку на основе итогового массива с обьектами
-var pinAdd = function (advertisingsTotal, pinCount) {
+// Создание фрагмента с пинами на основе массива обьектов
+var createFragmentPins = function (advertisingsTotal, pinCount) {
   var pinFragment = document.createDocumentFragment();
   for (var i = 0; i < pinCount; i++) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
@@ -190,7 +190,14 @@ var pinAdd = function (advertisingsTotal, pinCount) {
     img.setAttribute('src', advertisingsTotal[i].author.avatar);
     pinFragment.appendChild(mapPinElement);
   }
-  mapPinList.appendChild(pinFragment);
+  return pinFragment;
+};
+
+var fragmentPins = createFragmentPins(totalAdvertisings, arrayLength);
+
+// Отрисовка фрагмента с пинами в разметку
+var renderPins = function (pinsFragment) {
+  mapPinList.appendChild(pinsFragment);
 };
 
 // Поиск в разметке карты обьявлений
@@ -297,7 +304,7 @@ var activatePage = function () {
   getDisabledElements(mapFormElements, false);
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
-  pinAdd(totalAdvertisings, arrayLength);
+  renderPins(fragmentPins);
   mainPin.removeEventListener('mousedown', activatePage);
 };
 
