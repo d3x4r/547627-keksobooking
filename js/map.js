@@ -220,8 +220,8 @@ var getTypeRussian = function (type) {
   return russianType;
 };
 
-// Добавление информации об обьявлении в модальное окно, на основе одного обьекта из итогового массива с индексом -position
-var addDescription = function (totalAd) {
+// Создание фрагмента карточки обьявления, на основе одного обьекта из итогового массива с индексом -position
+var createDescriptionFragment = function (totalAd) {
 
   var mapFragment = document.createDocumentFragment();
   // Копирование шаблона модального окна
@@ -268,12 +268,13 @@ var addDescription = function (totalAd) {
 
   // Добавление завершенного элемента в фрагмент
   mapFragment.appendChild(mapElement);
-  // Добавление завершенного элемента в разметку
-  map.appendChild(mapFragment);
+  return mapFragment;
 };
 
-// вывод похожего обьявления
-// addDescription(totalAdvertisings[0]);
+// Добавление карточки обьявления в разметку
+var renderDescription = function (descriptionFragment) {
+  map.appendChild(descriptionFragment);
+};
 
 // Главная метка на карте
 var mainPin = document.querySelector('.map__pin--main');
@@ -387,7 +388,8 @@ mainPin.addEventListener('click', function () {
       if (pinDescription) {
         removeDescription();
       }
-      addDescription(advertising);
+      var currentDescription = createDescriptionFragment(advertising);
+      renderDescription(currentDescription);
 
       // Отслеживание кнопик закрытие описания и его закрытие при клике
       var closeDescriptionButton = map.querySelector('.popup__close');
