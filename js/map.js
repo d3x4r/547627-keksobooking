@@ -294,7 +294,8 @@ var getCoordinatPin = function (heightIndex, widthIndex) {
   return adressInput.value;
 };
 
-getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
+// Начальное значение поля адрес, равное координатам центра главного пина
+adressInput.value = (mainPin.offsetLeft + mainPin.offsetWidth / 2) + ',' + (mainPin.offsetTop + mainPin.offsetHeight / 2);
 
 // Блокировка ввода данных в инпут адресса от пользователя
 adressInput.readOnly = true;
@@ -306,10 +307,10 @@ var activatePage = function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   renderPins(fragmentPins);
-  mainPin.removeEventListener('mousedown', activatePage);
+  mainPin.removeEventListener('mouseup', activatePage);
 };
 
-mainPin.addEventListener('mousedown', activatePage);
+mainPin.addEventListener('mouseup', activatePage);
 
 mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
@@ -365,6 +366,7 @@ mainPin.addEventListener('mousedown', function (evt) {
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
+    getCoordinatPin(MAIN_PIN_HEIGHT_INDEX, MAIN_PIN_WIDTH_INDEX);
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
