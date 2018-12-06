@@ -21,11 +21,14 @@ var mapForm = document.querySelector('.map__filters');
 // Cостояние формы
 var setFormState = function (form) {
   form.classList.toggle(form.id + '--disabled');
-  var formElements = form.querySelectorAll('[name=' + form.id + '] > *');
+  var formElements = form.querySelectorAll('#' + form.id + ' > *');
   for (var i = 0; i < formElements.length; i++) {
     formElements[i].disabled = !formElements[i].disabled;
   }
 };
+
+setFormState(adForm);
+setFormState(mapForm);
 
 // Генерация упорядоченного массива с аватарами пользователей
 var getAvatarList = function (avatarCount) {
