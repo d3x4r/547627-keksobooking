@@ -1,6 +1,6 @@
 'use strict';
+
 (function () {
-  // ФОРМА
   var PRICE_BUNGALO = 0;
   var PRICE_FLAT = 1000;
   var PRICE_HOUSE = 5000;
