@@ -7,7 +7,7 @@
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
-  var arrayLength = 8;
+  var NUMBERS_OF_ADS = 8;
 
   var titles = [
     'Большая уютная квартира',
@@ -56,7 +56,7 @@
     }
     return avatarList;
   };
-  var avatars = getAvatarList(arrayLength);
+  var avatars = getAvatarList(NUMBERS_OF_ADS);
 
   // Функция для перемешивания массива в случайном порядке
   var getRandomArray = function (array) {
@@ -123,7 +123,5 @@
   };
 
   // Генерация итогового массива arrayLength-длинны, который состоит из обьектов
-  var totalAdvertisings = getAdList(arrayLength);
-
-  window.totalAdvertisings = totalAdvertisings;
+  window.totalAdvertisings = getAdList(NUMBERS_OF_ADS);
 })();

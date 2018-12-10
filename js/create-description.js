@@ -29,6 +29,29 @@
     return array;
   };
 
+  var getFeaturesFragment = function (featursList) {
+    var featuresFragment = document.createDocumentFragment();
+    for (var j = 0; j < featursList.offer.features.length; j++) {
+      var newElement = document.createElement('li');
+      newElement.classList.add('popup__feature');
+      newElement.classList.add('popup__feature--' + featursList.offer.features[j]);
+      featuresFragment.appendChild(newElement);
+    }
+    return featuresFragment;
+  };
+
+  var getPhotosFragment = function (photosList, photoPlace) {
+    var photosFragment = document.createDocumentFragment();
+    var shufflePhotos = shuffleArray(photosList.offer.photos);
+    var photoTemplate = photoPlace.querySelector('.popup__photo');
+
+    for (var k = 0; k < photosList.offer.photos.length; k++) {
+      var photo = photoTemplate.cloneNode(true);
+      photo.src = shufflePhotos[k];
+      photosFragment.appendChild(photo);
+    }
+    return photosFragment;
+  };
   // Создание фрагмента карточки обьявления, на основе одного обьекта из итогового массива с индексом -position
   var createDescription = function (totalAd) {
 
@@ -46,31 +69,17 @@
     var featuresContainer = cardElement.querySelector('.popup__features');
     // Удаление дочерних элементов блока popup__features в разметке с целью добавления сгенерированных данных
     featuresContainer.innerHTML = '';
-    // Добавление в разметку в блок popup__features сгенерированных элементов
-    for (var j = 0; j < totalAd.offer.features.length; j++) {
-      var newElement = document.createElement('li');
-      newElement.classList.add('popup__feature');
-      newElement.classList.add('popup__feature--' + totalAd.offer.features[j]);
-      featuresContainer.appendChild(newElement);
-    }
+
+    var featuresElement = getFeaturesFragment(totalAd);
+    featuresContainer.appendChild(featuresElement);
 
     cardElement.querySelector('.popup__description').textContent = totalAd.offer.description;
 
     var photosContainer = cardElement.querySelector('.popup__photos');
-    var photosContent = photosContainer.querySelector('.popup__photo');
+    var photosElement = getPhotosFragment(totalAd, photosContainer);
 
-    // Удаление дочерних элементов блока popup__photos в разметке с целью добавления сгенерированных данных
     photosContainer.innerHTML = '';
-
-    // Перемешивание массива с фото в случайном порядке
-    var shufflePhotos = shuffleArray(totalAd.offer.photos);
-
-    // Добавление в разметку в блок popup__photos сгенерированных элементов
-    for (var k = 0; k < totalAd.offer.photos.length; k++) {
-      var photo = photosContent.cloneNode(true);
-      photo.src = shufflePhotos[k];
-      photosContainer.appendChild(photo);
-    }
+    photosContainer.appendChild(photosElement);
 
     cardElement.querySelector('.popup__avatar').src = totalAd.author.avatar;
 
