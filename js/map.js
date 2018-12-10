@@ -72,6 +72,14 @@
     return mainPinY + ',' + mainPinX;
   };
 
+  // Поиск в разметке контейнера для меток обьявлений
+  var mapPinList = document.querySelector('.map__pins');
+
+  // Отрисовка фрагмента с пинами в разметку
+  var renderPins = function (pinsFragment) {
+    mapPinList.appendChild(pinsFragment);
+  };
+
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
@@ -129,6 +137,7 @@
     map: map,
     mainPin: mainPin,
     fragmentPins: fragmentPins,
-    getCoordinatePin: getCoordinatePin
+    getCoordinatePin: getCoordinatePin,
+    renderPins: renderPins
   };
 })();
