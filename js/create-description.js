@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
   // Поиск в разметке шаблона модального окна с информацией об обьявлении
   var mapTemplate = document.querySelector('#card')
