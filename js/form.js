@@ -1,9 +1,7 @@
 'use strict';
 
 (function () {
-  // Константы определяющие смещение координат на основе размеров метки mainPin
-  var MAIN_PIN_HEIGHT_INDEX = 70;
-  var MAIN_PIN_WIDTH_INDEX = 32;
+
   var adForm = document.querySelector('.ad-form');
   var mapForm = document.querySelector('.map__filters');
 
@@ -33,25 +31,13 @@
     addressInput.value = addressValue;
   };
 
-  var getCoordinatePin = function () {
-    if (window.map.map.classList.contains('map--faded')) {
-      var mainPinX = window.map.mainPin.offsetTop + (window.map.mainPin.clientHeight / 2);
-      var mainPinY = window.map.mainPin.offsetLeft + (window.map.mainPin.clientWidth / 2);
-    } else {
-      mainPinX = window.map.mainPin.offsetTop + MAIN_PIN_HEIGHT_INDEX;
-      mainPinY = window.map.mainPin.offsetLeft + MAIN_PIN_WIDTH_INDEX;
-    }
-    return mainPinY + ',' + mainPinX;
-  };
-
-  setAddress(getCoordinatePin());
+  setAddress(window.map.getCoordinatePin());
 
   window.form = {
     adForm: adForm,
     mapForm: mapForm,
     renderPins: renderPins,
     setFormState: setFormState,
-    setAddress: setAddress,
-    getCoordinatePin: getCoordinatePin
+    setAddress: setAddress
   };
 })();

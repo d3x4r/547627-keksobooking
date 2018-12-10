@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  // Константы определяющие смещение координат на основе размеров метки mainPin
+  var MAIN_PIN_HEIGHT_INDEX = 70;
+  var MAIN_PIN_WIDTH_INDEX = 32;
   var ESC_KEYCODE = 27;
 
   // Поиск в разметке карты обьявлений
@@ -58,6 +61,17 @@
     left: mapOverlay.offsetLeft
   };
 
+  var getCoordinatePin = function () {
+    if (map.classList.contains('map--faded')) {
+      var mainPinX = mainPin.offsetTop + (mainPin.clientHeight / 2);
+      var mainPinY = mainPin.offsetLeft + (mainPin.clientWidth / 2);
+    } else {
+      mainPinX = mainPin.offsetTop + MAIN_PIN_HEIGHT_INDEX;
+      mainPinY = mainPin.offsetLeft + MAIN_PIN_WIDTH_INDEX;
+    }
+    return mainPinY + ',' + mainPinX;
+  };
+
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
@@ -93,7 +107,7 @@
         pinPositionY = pinLimits.bottom;
       }
 
-      window.form.setAddress(window.form.getCoordinatePin());
+      window.form.setAddress(getCoordinatePin());
       mainPin.style.top = pinPositionY + 'px';
       mainPin.style.left = pinPositionX + 'px';
     };
@@ -101,7 +115,7 @@
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
-      window.form.setAddress(window.form.getCoordinatePin());
+      window.form.setAddress(getCoordinatePin());
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
 
@@ -114,6 +128,7 @@
   window.map = {
     map: map,
     mainPin: mainPin,
-    fragmentPins: fragmentPins
+    fragmentPins: fragmentPins,
+    getCoordinatePin: getCoordinatePin
   };
 })();
