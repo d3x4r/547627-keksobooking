@@ -4,53 +4,16 @@
   // Константы определяющие смещение координат на основе размеров метки mainPin
   var MAIN_PIN_HEIGHT_INDEX = 70;
   var MAIN_PIN_WIDTH_INDEX = 32;
-  var ESC_KEYCODE = 27;
+
 
   // Поиск в разметке карты обьявлений
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
   var mapOverlay = document.querySelector('.map__overlay');
 
-  var createFragmentPins = function (advertisingsTotal) {
-    var pinFragment = document.createDocumentFragment();
-
-    for (var i = 0; i < advertisingsTotal.length; i++) {
-      var mapPinElement = window.createPin(advertisingsTotal[i]);
-      onPinClick(mapPinElement, advertisingsTotal[i]);
-      pinFragment.appendChild(mapPinElement);
-    }
-    return pinFragment;
-  };
-
-  var onPinClick = function (element, pinObject) {
-    element.addEventListener('click', function () {
-      var mapCard = window.map.map.querySelector('.map__card');
-      if (mapCard) {
-        mapCard.remove();
-      }
-      var card = window.createDescription(pinObject);
-      renderDescription(card);
-
-      card.querySelector('.popup__close').addEventListener('click', function () {
-        card.remove();
-        document.removeEventListener('keydown', onButtonKeydown);
-      });
-
-      var onButtonKeydown = function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
-          card.remove();
-          document.removeEventListener('keydown', onButtonKeydown);
-        }
-      };
-      document.addEventListener('keydown', onButtonKeydown);
-    });
-  };
-
-  var fragmentPins = createFragmentPins(window.totalAdvertisings);
-
   // Добавление карточки обьявления в разметку
   var renderDescription = function (cardElement) {
-    window.map.map.appendChild(cardElement);
+    map.appendChild(cardElement);
   };
 
   var pinLimits = {
@@ -136,8 +99,8 @@
   window.map = {
     map: map,
     mainPin: mainPin,
-    fragmentPins: fragmentPins,
     getCoordinatePin: getCoordinatePin,
-    renderPins: renderPins
+    renderPins: renderPins,
+    renderDescription: renderDescription
   };
 })();
