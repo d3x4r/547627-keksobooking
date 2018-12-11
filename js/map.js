@@ -35,6 +35,73 @@
     return mainPinY + ',' + mainPinX;
   };
 
+  mainPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoord = {
+      x: evt.pageX,
+      y: evt.pageY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shiftCoord = {
+        x: startCoord.x - moveEvt.pageX,
+        y: startCoord.y - moveEvt.pageY
+      };
+
+      startCoord = {
+        x: moveEvt.pageX,
+        y: moveEvt.pageY
+      };
+
+      // Итоговые координаты пина
+      var pinPositionX = mainPin.offsetLeft - shiftCoord.x;
+      var pinPositionY = mainPin.offsetTop - shiftCoord.y;
+      // Проверка на выход пина за пределы родителя и запрет этого
+      if (pinPositionX < pinLimits.left) {
+        pinPositionX = pinLimits.left;
+      } else if (pinPositionX > pinLimits.right) {
+        pinPositionX = pinLimits.right;
+      } else if (pinPositionY < pinLimits.top) {
+        pinPositionY = pinLimits.top;
+      } else if (pinPositionY > pinLimits.bottom) {
+        pinPositionY = pinLimits.bottom;
+      }
+
+      if (mainPinMouseMoveCallback) {
+        mainPinMouseMoveCallback();
+      }
+
+      // window.form.setAddress(getCoordinatePin());
+      mainPin.style.top = pinPositionY + 'px';
+      mainPin.style.left = pinPositionX + 'px';
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      if (mainPinMouseMoveCallback) {
+        mainPinMouseMoveCallback();
+      }
+
+      // window.form.setAddress(getCoordinatePin());
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  var mainPinMouseMoveCallback = null;
+
+  var setMainPinMouseMoveCallback = function (callback) {
+    mainPinMouseMoveCallback = callback;
+  };
+
   // Поиск в разметке контейнера для меток обьявлений
   var mapPinList = document.querySelector('.map__pins');
 
@@ -47,9 +114,9 @@
   window.map = {
     map: map,
     mainPin: mainPin,
-    pinLimits: pinLimits,
     getCoordinatePin: getCoordinatePin,
     renderPins: renderPins,
-    renderDescription: renderDescription
+    renderDescription: renderDescription,
+    setMainPinMouseMoveCallback: setMainPinMouseMoveCallback
   };
 })();
