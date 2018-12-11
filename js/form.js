@@ -23,8 +23,6 @@
     addressInput.value = addressValue;
   };
 
-  setAddress(window.map.getCoordinatePin());
-
   window.form = {
     adForm: adForm,
     mapForm: mapForm,
