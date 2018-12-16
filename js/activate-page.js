@@ -40,7 +40,8 @@
     });
   };
 
-  var fragmentPins = createFragmentPins(window.totalAdvertisings);
+  // var fragmentPins = createFragmentPins(window.totalAdvertisings);
+load(createFragmentPins);
 
   window.map.setMainPinMouseMoveCallback(function () {
     window.form.setAddress(window.map.getCoordinatePin());
@@ -50,9 +51,10 @@
     window.form.setFormState(window.form.adForm);
     window.form.setFormState(window.form.mapForm);
     window.map.map.classList.remove('map--faded');
-    window.map.renderPins(fragmentPins);
+    // window.map.renderPins(fragmentPins);
     window.map.mainPin.removeEventListener('mouseup', activatePage);
   };
+
   window.map.mainPin.addEventListener('mouseup', activatePage);
 })();
 

@@ -107,7 +107,9 @@
 
   // Отрисовка фрагмента с пинами в разметку
   var renderPins = function (pinsFragment) {
-    mapPinList.appendChild(pinsFragment);
+    if (pinsFragment) {
+      mapPinList.appendChild(pinsFragment);
+    }
   };
 
 
