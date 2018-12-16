@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
+  window.ESC_KEYCODE = 27;
 
   window.form.setAddress(window.map.getCoordinatePin());
 
@@ -31,7 +31,7 @@
       });
 
       var onButtonKeydown = function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
+        if (evt.keyCode === window.ESC_KEYCODE) {
           card.remove();
           document.removeEventListener('keydown', onButtonKeydown);
         }
@@ -40,8 +40,29 @@
     });
   };
 
+  var eventPinsReceivedRender = function (receivedData) {
+    window.map.mainPin.addEventListener('mouseup', function () {
+      window.map.renderPins(createFragmentPins(receivedData));
+    });
+  };
+
+  var eventPinsReceivedError = function (receivedError) {
+    alert(receivedError);
+  };
   // var fragmentPins = createFragmentPins(window.totalAdvertisings);
-load(createFragmentPins);
+  // load(createFragmentPins);
+  // window.backend.load(function (receivedData) {
+  //   window.map.mainPin.addEventListener('mouseup', function () {
+  //     window.map.renderPins(createFragmentPins(receivedData));
+  //   });
+  // });
+
+  window.backend.load(eventPinsReceivedRender, eventPinsReceivedError);
+  window.form.adForm.addEventListener('submit', function (event) {
+    window.backend.upload(new FormData(window.form.adForm), window.form.onSuccessUpload, window.form.onFailUpload);
+    event.preventDefault();
+
+  });
 
   window.map.setMainPinMouseMoveCallback(function () {
     window.form.setAddress(window.map.getCoordinatePin());
