@@ -11,6 +11,11 @@
   var mainPin = document.querySelector('.map__pin--main');
   var mapOverlay = document.querySelector('.map__overlay');
 
+  var removeCard = function (mapCard) {
+    if (mapCard) {
+      mapCard.remove();
+    }
+  };
   // Добавление карточки обьявления в разметку
   var renderDescription = function (cardElement) {
     map.appendChild(cardElement);
@@ -112,10 +117,20 @@
     }
   };
 
+  var clearMap = function () {
+    var pins = mapPinList.querySelectorAll('.map__pin--users');
+
+    for (var j = 0; j < pins.length; j++) {
+      pins[j].remove();
+    }
+  };
+
 
   window.map = {
     map: map,
     mainPin: mainPin,
+    clearMap: clearMap,
+    removeCard: removeCard,
     getCoordinatePin: getCoordinatePin,
     renderPins: renderPins,
     renderDescription: renderDescription,
