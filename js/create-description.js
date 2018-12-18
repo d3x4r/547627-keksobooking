@@ -60,29 +60,74 @@
     var cardElement = mapTemplate.cloneNode(true);
 
     // Поиск элементов в разметке шаблона и добавление этим элементам значений обьекта
-    cardElement.querySelector('.popup__title').textContent = totalAd.offer.title;
-    cardElement.querySelector('.popup__text--address').textContent = totalAd.offer.address;
-    cardElement.querySelector('.popup__text--price').textContent = totalAd.offer.price + ' ₽/ночь';
-    cardElement.querySelector('.popup__type').textContent = getTypeRussian(totalAd.offer.type);
-    cardElement.querySelector('.popup__text--capacity').textContent = totalAd.offer.rooms + ' комнаты для ' + totalAd.offer.guests + ' гостей';
-    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + totalAd.offer.checkin + ', выезд до ' + totalAd.offer.checkout;
+    if (totalAd.offer.title) {
+      cardElement.querySelector('.popup__title').textContent = totalAd.offer.title;
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__title'));
+    }
+
+    if (totalAd.offer.address) {
+      cardElement.querySelector('.popup__text--address').textContent = totalAd.offer.address;
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__text--address'));
+    }
+
+    if (totalAd.offer.price) {
+      cardElement.querySelector('.popup__text--price').textContent = totalAd.offer.price + ' ₽/ночь';
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__text--price'));
+    }
+
+    if (totalAd.offer.type) {
+      cardElement.querySelector('.popup__type').textContent = getTypeRussian(totalAd.offer.type);
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__type'));
+    }
+
+    if (totalAd.offer.rooms > 0 && totalAd.offer.guests > 0) {
+      cardElement.querySelector('.popup__text--capacity').textContent = totalAd.offer.rooms + ' комнаты для ' + totalAd.offer.guests + ' гостей';
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__text--capacity'));
+    }
+
+    if (totalAd.offer.checkin && totalAd.offer.checkout) {
+      cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + totalAd.offer.checkin + ', выезд до ' + totalAd.offer.checkout;
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__text--time'));
+    }
 
     var featuresContainer = cardElement.querySelector('.popup__features');
     // Удаление дочерних элементов блока popup__features в разметке с целью добавления сгенерированных данных
     featuresContainer.innerHTML = '';
 
-    var featuresElement = getFeaturesFragment(totalAd);
-    featuresContainer.appendChild(featuresElement);
+    if (totalAd.offer.features.length > 0) {
+      var featuresElement = getFeaturesFragment(totalAd);
+      featuresContainer.appendChild(featuresElement);
+    } else {
+      cardElement.removeChild(featuresContainer);
+    }
 
-    cardElement.querySelector('.popup__description').textContent = totalAd.offer.description;
+    if (totalAd.offer.description) {
+      cardElement.querySelector('.popup__description').textContent = totalAd.offer.description;
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__description'));
+    }
 
     var photosContainer = cardElement.querySelector('.popup__photos');
-    var photosElement = getPhotosFragment(totalAd, photosContainer);
+    if (totalAd.offer.photos.length > 0) {
+      var photosElement = getPhotosFragment(totalAd, photosContainer);
 
-    photosContainer.innerHTML = '';
-    photosContainer.appendChild(photosElement);
+      photosContainer.innerHTML = '';
+      photosContainer.appendChild(photosElement);
+    } else {
+      cardElement.removeChild(photosContainer);
+    }
 
-    cardElement.querySelector('.popup__avatar').src = totalAd.author.avatar;
+    if (totalAd.author.avatar) {
+      cardElement.querySelector('.popup__avatar').src = totalAd.author.avatar;
+    } else {
+      cardElement.removeChild(cardElement.querySelector('.popup__avatar'));
+    }
 
     return cardElement;
   };

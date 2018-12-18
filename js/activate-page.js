@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
+  window.ESC_KEYCODE = 27;
 
   window.form.setAddress(window.map.getCoordinatePin());
 
@@ -19,9 +19,7 @@
   var onPinClick = function (element, pinObject) {
     element.addEventListener('click', function () {
       var mapCard = window.map.map.querySelector('.map__card');
-      if (mapCard) {
-        mapCard.remove();
-      }
+      window.map.removeCard(mapCard);
       var card = window.createDescription(pinObject);
       window.map.renderDescription(card);
 
@@ -31,7 +29,7 @@
       });
 
       var onButtonKeydown = function (evt) {
-        if (evt.keyCode === ESC_KEYCODE) {
+        if (evt.keyCode === window.ESC_KEYCODE) {
           card.remove();
           document.removeEventListener('keydown', onButtonKeydown);
         }
@@ -40,19 +38,53 @@
     });
   };
 
-  var fragmentPins = createFragmentPins(window.totalAdvertisings);
+  var onPageLoadError = function (receivedError) {
+    throw new Error(receivedError);
+  };
+
+  var onPageDeactivate = function () {
+    window.form.adForm.reset();
+    window.form.setFormState(window.form.adForm);
+    window.form.setFormState(window.form.mapForm);
+    window.map.reset();
+    window.form.setAddress(window.map.getCoordinatePin());
+    window.map.mainPin.focus();
+
+    window.map.mainPin.addEventListener('mouseup', onPageActivate);
+  };
+
+  var onFormUpload = function () {
+    window.message.show();
+    onPageDeactivate();
+  };
+
+  var onFormUploadError = function () {
+    window.message.showError();
+  };
+
+  window.form.adForm.addEventListener('submit', function (event) {
+    window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
+    event.preventDefault();
+  });
 
   window.map.setMainPinMouseMoveCallback(function () {
     window.form.setAddress(window.map.getCoordinatePin());
   });
 
-  var activatePage = function () {
-    window.form.setFormState(window.form.adForm);
-    window.form.setFormState(window.form.mapForm);
-    window.map.map.classList.remove('map--faded');
-    window.map.renderPins(fragmentPins);
-    window.map.mainPin.removeEventListener('mouseup', activatePage);
+  var onPageActivate = function () {
+    window.backend.load(function (receivedData) {
+      window.form.setFormState(window.form.adForm);
+      window.form.setFormState(window.form.mapForm);
+      window.map.changeMapStatus();
+      window.map.renderPins(createFragmentPins(receivedData));
+      window.map.mainPin.removeEventListener('mouseup', onPageActivate);
+    }, onPageLoadError);
   };
-  window.map.mainPin.addEventListener('mouseup', activatePage);
+
+  window.map.mainPin.addEventListener('mouseup', onPageActivate);
+  window.form.resetPageButton.addEventListener('click', function (evt) {
+    onPageDeactivate();
+    evt.preventDefault();
+  });
 })();
 

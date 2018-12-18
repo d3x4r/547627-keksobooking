@@ -4,8 +4,8 @@
 
   var adForm = document.querySelector('.ad-form');
   var mapForm = document.querySelector('.map__filters');
+  var resetPageButton = document.querySelector('.ad-form__reset');
 
-  // Поиск поля ввода адреса в форме
   var addressInput = adForm.querySelector('[name="address"]');
 
   var setFormState = function (form) {
@@ -16,17 +16,44 @@
     }
   };
 
-  setFormState(adForm);
-  setFormState(mapForm);
+  var setFormsState = function () {
+    setFormState(adForm);
+    setFormState(mapForm);
+  };
+
+  setFormsState();
 
   var setAddress = function (addressValue) {
     addressInput.value = addressValue;
   };
 
+  var addSubmitListener = function (callback) {
+    adForm.addEventListener('submit', function (evt) {
+      callback(evt.target);
+      evt.preventDefault();
+    });
+  };
+
+  var addResetListener = function (callback) {
+    resetPageButton.addEventListener('click', function (evt) {
+      callback();
+      evt.preventDefault();
+    });
+  };
+
+  var resetForm = function () {
+    adForm.reset();
+  };
+  // adForm.addEventListener('submit', function (event) {
+  //   window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
+  //   event.preventDefault();
+  // });
+
   window.form = {
-    adForm: adForm,
-    mapForm: mapForm,
-    setFormState: setFormState,
-    setAddress: setAddress
+    addSubmitListener: addSubmitListener,
+    resetForm: resetForm,
+    setFormsState: setFormsState,
+    setAddress: setAddress,
+    addResetListener: addResetListener
   };
 })();
