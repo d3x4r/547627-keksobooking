@@ -8,65 +8,49 @@
   .content
   .querySelector('.error');
 
-  var onSuccessUpload = function (targetForm) {
+  var showSuccesMessage = function () {
     var succesWindow = succesFormTemplate.cloneNode(true);
-    targetForm.appendChild(succesWindow);
+    document.body.appendChild(succesWindow);
 
     succesWindow.addEventListener('click', function () {
-      targetForm.removeChild(succesWindow);
-      document.removeEventListener('keydown', closeSuccessWindow);
+      document.body.removeChild(succesWindow);
+      document.removeEventListener('keydown', onMessageClose);
     });
 
-    var closeSuccessWindow = function (evtESC) {
+    var onMessageClose = function (evtESC) {
       if (evtESC.keyCode === window.ESC_KEYCODE) {
-        var successWindow = targetForm.querySelector('.success');
-        targetForm.removeChild(successWindow);
-        document.removeEventListener('keydown', closeSuccessWindow);
+        var successWindow = document.body.querySelector('.success');
+        document.body.removeChild(successWindow);
+        document.removeEventListener('keydown', onMessageClose);
       }
     };
 
-    document.addEventListener('keydown', closeSuccessWindow);
+    document.addEventListener('keydown', onMessageClose);
   };
 
-  var onFailUpload = function (targetForm) {
+  var showErrorMessage = function () {
     var failWindow = failFormTemplate.cloneNode(true);
-    targetForm.appendChild(failWindow);
+    document.body.appendChild(failWindow);
 
-    var failButton = targetForm.querySelector('.error__button');
+    var failButton = failWindow.querySelector('.error__button');
     failButton.addEventListener('click', function () {
-      targetForm.removeChild(failWindow);
-      document.removeEventListener('keydown', closeFailWindow);
+      document.body.removeChild(failWindow);
+      document.removeEventListener('keydown', onErrorClose);
     });
 
-    var closeFailWindow = function (evtESC) {
+    var onErrorClose = function (evtESC) {
       if (evtESC.keyCode === window.ESC_KEYCODE) {
-        var errorWindow = targetForm.querySelector('.error');
-        targetForm.removeChild(errorWindow);
-        document.removeEventListener('keydown', closeFailWindow);
+        var errorWindow = document.body.querySelector('.error');
+        document.body.removeChild(errorWindow);
+        document.removeEventListener('keydown', onErrorClose);
       }
     };
 
-    document.addEventListener('keydown', closeFailWindow);
+    document.addEventListener('keydown', onErrorClose);
   };
-
-  // var closeSuccessWindow = function (evtESC) {
-  //   if (evtESC.keyCode === window.ESC_KEYCODE) {
-  //     var successWindow = adForm.querySelector('.success');
-  //     adForm.removeChild(successWindow);
-  //     document.removeEventListener('keydown', closeSuccessWindow);
-  //   }
-  // };
-
-  // var closeFailWindow = function (evtESC) {
-  //   if (evtESC.keyCode === window.ESC_KEYCODE) {
-  //     var errorWindow = adForm.querySelector('.error');
-  //     adForm.removeChild(errorWindow);
-  //     document.removeEventListener('keydown', closeFailWindow);
-  //   }
-  // };
 
   window.message = {
-    onSuccessUpload: onSuccessUpload,
-    onFailUpload: onFailUpload
+    show: showSuccesMessage,
+    showError: showErrorMessage
   };
 }());

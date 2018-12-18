@@ -4,6 +4,8 @@
   // Константы определяющие смещение координат на основе размеров метки mainPin
   var MAIN_PIN_HEIGHT_INDEX = 70;
   var MAIN_PIN_WIDTH_INDEX = 32;
+  var MAIN_PIN_TOP_BASIC_POSITION = '375px';
+  var MAIN_PIN_LEFT_BASIC_POSITION = '570px';
 
 
   // Поиск в разметке карты обьявлений
@@ -11,7 +13,8 @@
   var mainPin = document.querySelector('.map__pin--main');
   var mapOverlay = document.querySelector('.map__overlay');
 
-  var removeCard = function (mapCard) {
+  var removeCard = function () {
+    var mapCard = window.map.map.querySelector('.map__card');
     if (mapCard) {
       mapCard.remove();
     }
@@ -125,15 +128,28 @@
     }
   };
 
+  var changeMapStatus = function () {
+    map.classList.toggle('map--faded');
+  };
+
+  var reset = function () {
+    removeCard();
+    changeMapStatus();
+    clearMap();
+    mainPin.style.top = MAIN_PIN_TOP_BASIC_POSITION;
+    mainPin.style.left = MAIN_PIN_LEFT_BASIC_POSITION;
+  };
+
 
   window.map = {
     map: map,
     mainPin: mainPin,
-    clearMap: clearMap,
     removeCard: removeCard,
     getCoordinatePin: getCoordinatePin,
     renderPins: renderPins,
     renderDescription: renderDescription,
-    setMainPinMouseMoveCallback: setMainPinMouseMoveCallback
+    setMainPinMouseMoveCallback: setMainPinMouseMoveCallback,
+    changeMapStatus: changeMapStatus,
+    reset: reset
   };
 })();

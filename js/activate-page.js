@@ -2,9 +2,6 @@
 
 (function () {
   window.ESC_KEYCODE = 27;
-  var MAIN_PIN_TOP_BASIC_POSITION = '375px';
-  var MAIN_PIN_LEFT_BASIC_POSITION = '570px';
-
 
   window.form.setAddress(window.map.getCoordinatePin());
 
@@ -41,44 +38,32 @@
     });
   };
 
-  var eventPinsReceivedRender = function (receivedData) {
-    window.map.renderPins(createFragmentPins(receivedData));
-  };
-
-  var eventPinsReceivedError = function (receivedError) {
+  var onPageLoadError = function (receivedError) {
     throw new Error(receivedError);
   };
 
-  var getPageDeafault = function () {
-    var mapCard = window.map.map.querySelector('.map__card');
-    window.map.removeCard(mapCard);
+  var onPageDeactivate = function () {
     window.form.adForm.reset();
     window.form.setFormState(window.form.adForm);
     window.form.setFormState(window.form.mapForm);
-    window.map.map.classList.add('map--faded');
-    window.map.mainPin.style.top = MAIN_PIN_TOP_BASIC_POSITION;
-    window.map.mainPin.style.left = MAIN_PIN_LEFT_BASIC_POSITION;
+    window.map.reset();
     window.form.setAddress(window.map.getCoordinatePin());
     window.map.mainPin.focus();
 
-    if (window.map.map.querySelector('.map__card')) {
-      window.map.map.querySelector('.map__card').remove();
-    }
-    window.map.mainPin.addEventListener('mouseup', activatePage);
+    window.map.mainPin.addEventListener('mouseup', onPageActivate);
   };
 
-  var onSuccessUploadCallback = function () {
-    window.message.onSuccessUpload(window.map.map);
-    window.map.clearMap();
-    getPageDeafault();
+  var onFormUpload = function () {
+    window.message.show();
+    onPageDeactivate();
   };
 
-  var onFailUploadCallback = function () {
-    window.message.onFailUpload(window.form.adForm);
+  var onFormUploadError = function () {
+    window.message.showError();
   };
 
   window.form.adForm.addEventListener('submit', function (event) {
-    window.backend.upload(new FormData(window.form.adForm), onSuccessUploadCallback, onFailUploadCallback);
+    window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
     event.preventDefault();
   });
 
@@ -86,18 +71,19 @@
     window.form.setAddress(window.map.getCoordinatePin());
   });
 
-  var activatePage = function () {
-    window.form.setFormState(window.form.adForm);
-    window.form.setFormState(window.form.mapForm);
-    window.map.map.classList.remove('map--faded');
-    window.backend.load(eventPinsReceivedRender, eventPinsReceivedError);
-    window.map.mainPin.removeEventListener('mouseup', activatePage);
+  var onPageActivate = function () {
+    window.backend.load(function (receivedData) {
+      window.form.setFormState(window.form.adForm);
+      window.form.setFormState(window.form.mapForm);
+      window.map.changeMapStatus();
+      window.map.renderPins(createFragmentPins(receivedData));
+      window.map.mainPin.removeEventListener('mouseup', onPageActivate);
+    }, onPageLoadError);
   };
 
-  window.map.mainPin.addEventListener('mouseup', activatePage);
+  window.map.mainPin.addEventListener('mouseup', onPageActivate);
   window.form.resetPageButton.addEventListener('click', function (evt) {
-    window.map.clearMap();
-    getPageDeafault();
+    onPageDeactivate();
     evt.preventDefault();
   });
 })();
