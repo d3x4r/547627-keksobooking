@@ -10,13 +10,13 @@
 
     for (var i = 0; i < advertisingsTotal.length; i++) {
       var mapPinElement = window.createPin(advertisingsTotal[i]);
-      onPinClick(mapPinElement, advertisingsTotal[i]);
+      setPinClick(mapPinElement, advertisingsTotal[i]);
       pinFragment.appendChild(mapPinElement);
     }
     return pinFragment;
   };
 
-  var onPinClick = function (element, pinObject) {
+  var setPinClick = function (element, pinObject) {
     element.addEventListener('click', function () {
       var mapCard = window.map.map.querySelector('.map__card');
       window.map.removeCard(mapCard);
@@ -74,8 +74,8 @@
   //   event.preventDefault();
   // });
   // window.form.addSubmitListener(window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError));
-  var onFormSubmit = function () {
-    window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
+  var onFormSubmit = function (eventTarget) {
+    window.backend.upload(new FormData(eventTarget), onFormUpload, onFormUploadError);
   };
   window.form.addSubmitListener(onFormSubmit);
 

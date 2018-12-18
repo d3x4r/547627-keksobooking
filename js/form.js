@@ -29,7 +29,7 @@
 
   var addSubmitListener = function (callback) {
     adForm.addEventListener('submit', function (evt) {
-      callback();
+      callback(evt.target);
       evt.preventDefault();
     });
   };
@@ -50,7 +50,6 @@
   // });
 
   window.form = {
-    adForm: adForm,
     addSubmitListener: addSubmitListener,
     resetForm: resetForm,
     setFormsState: setFormsState,
