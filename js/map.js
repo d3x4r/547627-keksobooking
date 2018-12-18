@@ -140,16 +140,29 @@
     mainPin.style.left = MAIN_PIN_LEFT_BASIC_POSITION;
   };
 
+  var addMouseUpListener = function (callback) {
+    var onMainPinMouseUp = function () {
+      callback();
+      mainPin.removeEventListener('mouseup', onMainPinMouseUp);
+    };
+    mainPin.addEventListener('mouseup', onMainPinMouseUp);
+  };
+
+  var putMainPinFocus = function () {
+    mainPin.focus();
+  };
+
 
   window.map = {
     map: map,
-    mainPin: mainPin,
     removeCard: removeCard,
     getCoordinatePin: getCoordinatePin,
     renderPins: renderPins,
     renderDescription: renderDescription,
     setMainPinMouseMoveCallback: setMainPinMouseMoveCallback,
     changeMapStatus: changeMapStatus,
-    reset: reset
+    reset: reset,
+    addMouseUpListener: addMouseUpListener,
+    putMainPinFocus: putMainPinFocus
   };
 })();
