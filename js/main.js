@@ -88,6 +88,9 @@
       window.form.setFormsState();
       window.map.changeMapStatus();
       window.map.renderPins(createFragmentPins(receivedData));
+      window.filters.addInputChangeListener(receivedData, function (gggg) {
+        window.map.renderPins(createFragmentPins(gggg));
+      });
     }, onPageLoadError);
   };
 

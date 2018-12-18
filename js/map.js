@@ -163,6 +163,7 @@
     changeMapStatus: changeMapStatus,
     reset: reset,
     addMouseUpListener: addMouseUpListener,
-    putMainPinFocus: putMainPinFocus
+    putMainPinFocus: putMainPinFocus,
+    clearMap: clearMap
   };
 })();
