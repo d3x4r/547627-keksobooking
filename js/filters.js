@@ -1,196 +1,86 @@
 'use strict';
 (function () {
+  var MIN_PRICE_VALUE = 10000;
+  var MAX_PRICE_VALUE = 50000;
+
   var filtersForm = document.querySelector('.map__filters');
   var arrays = filtersForm.querySelectorAll('select, [type=checkbox]');
-  var typeHS = document.querySelector('#housing-type');
-  var price = document.querySelector('#housing-price');
-  var rooms = document.querySelector('#housing-rooms');
-  var guest = document.querySelector('#housing-guests');
-  var features = document.querySelectorAll('.map__checkbox');
-  // console.log(features);
+  var adTypeSelect = document.querySelector('#housing-type');
+  var adPriceSelect = document.querySelector('#housing-price');
+  var adRoomSelect = document.querySelector('#housing-rooms');
+  var adGuestSelect = document.querySelector('#housing-guests');
+  var featuresCheckbox = document.querySelectorAll('.map__checkbox');
+
   var addInputChangeListener = function (data, callback) {
     arrays.forEach(function (element) {
 
-      element.addEventListener('change', function (evt) {
-        // var housesArray;
-        // if (evt.target === typeHS) {
-        //   housesArray = data.filter(function (houseType) {
-        //     return houseType.offer.type === evt.target.value;
-        //   });
-        // }
-        // if (evt.target === rooms) {
-        //   housesArray = data.filter(function (houseType) {
-        //     return houseType.offer.rooms == evt.target.value;
-        //   });
-        // }
-        var housesArray = data;
-        var houseType = housesArray.filter(function (houseType) {
-          if (typeHS.value === 'any') {
-            return houseType;
+      element.addEventListener('change', function () {
+
+        var cleanAds = data;
+        var byTypeAds = cleanAds.filter(function (ad) {
+          if (adTypeSelect.value === 'any') {
+            return ad;
           }
-          return houseType.offer.type === typeHS.value;
+          return ad.offer.type === adTypeSelect.value;
         });
 
-        var priceValue = houseType.filter(function (houseType) {
-          if (price.value === 'any') {
-            return houseType;
-          } else if (price.value === 'middle') {
-            return houseType.offer.price >= 10000 && houseType.offer.price <= 50000 ;
-          } else if (price.value === 'low') {
-            return houseType.offer.price < 10000;
+        var byPriceAds = byTypeAds.filter(function (ad) {
+          if (adPriceSelect.value === 'any') {
+            return ad;
+          } else if (adPriceSelect.value === 'middle') {
+            return ad.offer.price >= MIN_PRICE_VALUE && ad.offer.price <= MAX_PRICE_VALUE;
+          } else if (adPriceSelect.value === 'low') {
+            return ad.offer.price < MIN_PRICE_VALUE;
           }
-          return houseType.offer.price > 50000;
+          return ad.offer.price > MAX_PRICE_VALUE;
         });
 
-        var roomsValue = priceValue.filter(function (houseType) {
-          if (rooms.value === 'any') {
-            return houseType;
+        var byRoomsAds = byPriceAds.filter(function (ad) {
+          if (adRoomSelect.value === 'any') {
+            return ad;
           }
-          return houseType.offer.rooms == rooms.value;
+          return ad.offer.rooms == adRoomSelect.value;
         });
 
-        var guestValue = roomsValue.filter(function (houseType) {
-          if (guest.value === 'any') {
-            return houseType;
-          } else if (guest.value == 2) {
-            return houseType.offer.guests == guest.value;
-          } else if (guest.value == 1) {
-            return houseType.offer.guests == guest.value;
+        var byGuestAds = byRoomsAds.filter(function (ad) {
+          if (adGuestSelect.value === 'any') {
+            return ad;
           }
-          return houseType.offer.rooms == guest.value;
+          return ad.offer.guests == adGuestSelect.value;
         });
 
-        // var inputsFilter = function (elementsInputs, arrayList) {
-        //   for (var i = 0; i < elementsInputs.length; i++) {
-        //     if (elementsInputs[i].checked) {
-        //       var filter = arrayList.filter(function (element) {
-        //         for (var j = 0; j < element.offer.features.length; j++){
-        //           return element.offer.features[j] == elementsInputs[i].value;
-        //         }
-        //       }); return filter;
-        //     }
-        //     return arrayList;
-        //   }
-        // };
+        var bySelectFilteredAds = byGuestAds;
 
-        var inputsFilter = function (elementsInputs, arrayList) {
-          var copyArr = arrayList.slice();
-          var filter;
-          for (var i = 0; i < elementsInputs.length; i++) {
-            if (elementsInputs[i].checked) {
-              filter = copyArr.filter(function (element) {
-                var xxx = 0;
-                for (var j = 0; j < element.offer.features.length; j++){
-                  if (element.offer.features[j] == elementsInputs[i].value) {
-                    xxx = 1;
+        var filterByCheckbox = function (adsList) {
+          var AdsDuplicate = adsList.slice();
+          var filteredAds;
+          for (var i = 0; i < featuresCheckbox.length; i++) {
+            if (featuresCheckbox[i].checked) {
+              filteredAds = AdsDuplicate.filter(function (adElement) {
+                var booleanIndex = 0;
+                for (var j = 0; j < adElement.offer.features.length; j++){
+                  if (adElement.offer.features[j] == featuresCheckbox[i].value) {
+                    booleanIndex = 1;
                   }
-                } if (xxx) {
-                  return element.offer.features;
+                } if (booleanIndex) {
+                  return adElement.offer.features;
                 }
               });
-              copyArr = filter;
+              AdsDuplicate = filteredAds;
             }
-          } if (filter) {
-            return filter;
+          } if (filteredAds) {
+            return filteredAds;
           } else {
-            return arrayList;
+            return adsList;
           }
         };
 
-
-        // inputsFilter(features, guestValue);
-        // var wifiValue = guestValue.filter(function (houseType) {
-        //  if (evt.target.value == 'wifi' && evt.target.checked) {
-        //     for (var i = 0 ;i < houseType.offer.features.length; i++) {
-        //       return houseType.offer.features[i] == 'wifi';
-        //     }
-        //   } else {
-        //     return houseType;
-        //   }
-        // });
-
-        // var featuresArr = guestValue.filter(function (houseType) {   });
-          // var filt = function (array1) {
-
-          //   for (var i = 0; i < array1.length; i++) {
-
-          //     if (array1[i].value == 'wifi' && array1[i].checked) {
-          //       return houseType.offer.features == 'wifi';
-          //     }
-          //   }
-          // };
-          // filt(features);
-
-          // var filter = function (inputs) {
-          //   var fullggg = guestValue;
-          //   for (var i = 0; i < inputs.length; i++) {
-          //     if (inputs[i].checked) {
-          //       console.log(inputs[i]);
-          //       // console.log(i);
-          //       if (i > 1) {
-          //         console.log(i);
-          //       }
-          //     var finalFilter = fullggg.filter(function (object) {
-          //       var base;
-          //       object.offer.features.forEach(function (item) {
-          //         // console.log(item + ' ' + inputs[i].value);
-          //         if (item == inputs[i].value) {
-          //           // console.log('gg');
-          //           // base++;
-          //           // console.log(item + ' ' + inputs[i].value);
-          //           // console.log(object);
-          //           base = object;
-
-          //         }
-          //         });
-
-          //         return base;
-          //         // console.log(base+'итог');
-          //       });
-          //     } else {
-
-          //     }
-          //   }
-
-          //   return finalFilter;
-          // };
-
-
-
         window.map.clearMap();
-        callback(inputsFilter(features, guestValue));
+        callback(filterByCheckbox(bySelectFilteredAds));
       });
     });
   };
 
-  // var addInputChangeListener = function (data, callback) {
-  //   type.addEventListener('change', function (evt) {
-  //     var housesByType = data.filter(function (houseType) {
-  //       return houseType.offer.type === evt.target.value;
-  //     });
-  //     window.map.clearMap();
-  //     callback(housesByType);
-  //   });
-  // };
-  // type.addEventListener('change', function (evt) {
-  //   console.log(evt.target.value);
-  // });
-
-  // price.addEventListener('change', function (evt) {
-  //   console.log(evt.target.value);
-  // });
-
-  // rooms.addEventListener('change', function (evt) {
-  //   console.log(evt.target.value);
-  // });
-
-  // guest.addEventListener('change', function (evt) {
-  //   console.log(evt.target.value);
-  // });
-
-  // features.addEventListener('change', function (evt) {
-  //   console.log(evt.target.value);
-  // });
   window.filters = {
     addInputChangeListener: addInputChangeListener
   };
