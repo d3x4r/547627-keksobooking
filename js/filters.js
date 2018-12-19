@@ -84,16 +84,17 @@
                   if (element.offer.features[j] == elementsInputs[i].value) {
                     xxx = 1;
                   }
-                  // console.log(element.offer.features[j] == elementsInputs[i].value);
-                  // return element.offer.features[j] == elementsInputs[i].value;
                 } if (xxx) {
                   return element.offer.features;
                 }
               });
-              console.log(filter);
               copyArr = filter;
             }
-          } return filter;
+          } if (filter) {
+            return filter;
+          } else {
+            return arrayList;
+          }
         };
 
 
