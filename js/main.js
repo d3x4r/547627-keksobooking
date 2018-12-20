@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var PINS_MAX_QUANTITY = 5;
   window.ESC_KEYCODE = 27;
 
   window.form.setAddress(window.map.getCoordinatePin());
@@ -9,6 +10,9 @@
     var pinFragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisingsTotal.length; i++) {
+      if (i === PINS_MAX_QUANTITY) {
+        break;
+      }
       var mapPinElement = window.createPin(advertisingsTotal[i]);
       setPinClick(mapPinElement, advertisingsTotal[i]);
       pinFragment.appendChild(mapPinElement);
@@ -69,11 +73,6 @@
     window.message.showError();
   };
 
-  // window.form.adForm.addEventListener('submit', function (event) {
-  //   window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
-  //   event.preventDefault();
-  // });
-  // window.form.addSubmitListener(window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError));
   var onFormSubmit = function (eventTarget) {
     window.backend.upload(new FormData(eventTarget), onFormUpload, onFormUploadError);
   };
@@ -88,17 +87,13 @@
       window.form.setFormsState();
       window.map.changeMapStatus();
       window.map.renderPins(createFragmentPins(receivedData));
-      window.filters.addInputChangeListener(receivedData, function (gggg) {
-        window.map.renderPins(createFragmentPins(gggg));
+      window.filters.addInputChangeListener(receivedData, function (filteredData) {
+        window.map.renderFilteredData(filteredData, createFragmentPins);
       });
     }, onPageLoadError);
   };
 
   window.map.addMouseUpListener(onMainPinMouseUp);
   window.form.addResetListener(onResetButtonClick);
-  // window.form.resetPageButton.addEventListener('click', function (evt) {
-  //   deactivatePage();
-  //   evt.preventDefault();
-  // });
 })();
 

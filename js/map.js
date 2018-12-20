@@ -120,6 +120,12 @@
     }
   };
 
+  var renderFilteredData = function (data, createPinsCallback) {
+    removeCard();
+    clearMap();
+    renderPins(createPinsCallback(data));
+  };
+
   var clearMap = function () {
     var pins = mapPinList.querySelectorAll('.map__pin--users');
 
@@ -164,6 +170,6 @@
     reset: reset,
     addMouseUpListener: addMouseUpListener,
     putMainPinFocus: putMainPinFocus,
-    clearMap: clearMap
+    renderFilteredData: renderFilteredData
   };
 })();

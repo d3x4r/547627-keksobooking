@@ -71,12 +71,15 @@
     }
   };
 
+  var filteredAds = function (data) {
+    return filterByCheckbox(filterBySelect(data));
+  };
+
   var addInputChangeListener = function (data, callback) {
     arrays.forEach(function (element) {
 
       element.addEventListener('change', function () {
-        window.map.clearMap();
-        callback(filterByCheckbox(filterBySelect(data)));
+        callback(filteredAds(data));
       });
     });
   };
