@@ -82,13 +82,17 @@
     window.form.setAddress(window.map.getCoordinatePin());
   });
 
+  var renderFilteredDataDebounce = window.debounce(function (filteredData) {
+    window.map.renderFilteredData(filteredData, createFragmentPins);
+  });
+
   var activatePage = function () {
     window.backend.load(function (receivedData) {
       window.form.setFormsState();
       window.map.changeMapStatus();
       window.map.renderPins(createFragmentPins(receivedData));
       window.filters.addInputChangeListener(receivedData, function (filteredData) {
-        window.map.renderFilteredData(filteredData, createFragmentPins);
+        renderFilteredDataDebounce(filteredData);
       });
     }, onPageLoadError);
   };
