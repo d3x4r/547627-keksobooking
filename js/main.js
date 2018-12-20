@@ -91,7 +91,8 @@
       window.form.setFormsState();
       window.map.changeMapStatus();
       window.map.renderPins(createFragmentPins(receivedData));
-      window.filters.addInputChangeListener(receivedData, function (filteredData) {
+      window.filters.addFormChangeListener(receivedData, function (filteredData) {
+        // window.filters.filteredTest(filteredData);
         renderFilteredDataDebounce(filteredData);
       });
     }, onPageLoadError);
