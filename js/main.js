@@ -92,7 +92,6 @@
       window.map.changeMapStatus();
       window.map.renderPins(createFragmentPins(receivedData));
       window.filters.addFormChangeListener(receivedData, function (filteredData) {
-        // window.filters.filteredTest(filteredData);
         renderFilteredDataDebounce(filteredData);
       });
     }, onPageLoadError);

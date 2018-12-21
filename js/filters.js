@@ -69,57 +69,33 @@
     return filteredBySelectAds;
   };
 
-  // var filterByCheckbox = function (adsList) {
-  //   var adsDuplicate = adsList.slice();
-  //   var filteredAds;
-  //   for (var i = 0; i < checkboxes.length; i++) {
-  //     if (checkboxes[i].checked) {
-  //       filteredAds = adsDuplicate.filter(function (adElement) {
-  //         for (var j = 0; j < adElement.offer.features.length; j++) {
-  //           if (adElement.offer.features[j] === checkboxes[i].value) {
-  //             return adElement.offer.features;
-  //           }
-  //         }
-  //         return filteredAds;
-  //       });
-  //       adsDuplicate = filteredAds;
-  //     }
-  //   } if (filteredAds) {
-  //     return filteredAds;
-  //   } else {
-  //     return adsList;
-  //   }
-  // };
+  var filterByCheckbox = function (adsList) {
 
-  var filteredTest = function (adsList) {
-    var adsFinal;
-    checkboxes.forEach(function (element) {
-      element.addEventListener('change', function () {
-        var checkboxesArray = Array.from(checkboxes);
-        var checkedElements = checkboxesArray.filter(function (element1) {
-          return element1.checked;
-        });
-        var requiredFeatures = checkedElements.map(function (element2) {
-          return element2.value;
-        });
+    var checkboxesArray = Array.from(checkboxes);
+    var checkedElements = checkboxesArray.filter(function (checkbox) {
+      return checkbox.checked;
+    });
 
-        adsFinal = adsList.filter(function (element3) {
-          for (var j = 0; j < element3.offer.features.length; j++) {
-            for (var g = 0; g < requiredFeatures.length; g++) {
-              // console.log(element3.offer.features[j] == requiredFeatures[g]);
-              if (element3.offer.features[j] == requiredFeatures[g]) {
-                return true;
-              }
-            }
+    var requiredFeatures = checkedElements.map(function (checkboxChecked) {
+      return checkboxChecked.value;
+    });
+
+    var adsFinal = adsList.filter(function (adObject) {
+      return requiredFeatures.every(function (featuresValue) {
+        var booleanIndex = 0;
+        adObject.offer.features.forEach(function (adObjectOfferFeatureValue) {
+          if (featuresValue === adObjectOfferFeatureValue) {
+            booleanIndex = 1;
           }
-        }); console.log(adsFinal);
+        });
+        return booleanIndex;
       });
     });
     return adsFinal;
   };
 
   var filteredAds = function (data) {
-    return filteredTest(filterBySelect(data));
+    return filterByCheckbox(filterBySelect(data));
   };
 
   var addFormChangeListener = function (data, callback) {
@@ -129,7 +105,6 @@
   };
 
   window.filters = {
-    addFormChangeListener: addFormChangeListener,
-    filteredTest: filteredTest
+    addFormChangeListener: addFormChangeListener
   };
 }());
