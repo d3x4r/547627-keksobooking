@@ -3,13 +3,15 @@
   var MIN_PRICE_VALUE = 10000;
   var MAX_PRICE_VALUE = 50000;
 
+  var PINS_MAX_QUANTITY = 5;
+
   var filtersForm = document.querySelector('.map__filters');
   var checkboxes = filtersForm.querySelectorAll('[type=checkbox]');
 
-  var adTypeSelect = document.querySelector('#housing-type');
-  var adPriceSelect = document.querySelector('#housing-price');
-  var adRoomSelect = document.querySelector('#housing-rooms');
-  var adGuestSelect = document.querySelector('#housing-guests');
+  var adTypeSelect = filtersForm.querySelector('#housing-type');
+  var adPriceSelect = filtersForm.querySelector('#housing-price');
+  var adRoomSelect = filtersForm.querySelector('#housing-rooms');
+  var adGuestSelect = filtersForm.querySelector('#housing-guests');
 
   var isTypeMatch = function (ad) {
     switch (adTypeSelect.value) {
@@ -70,9 +72,7 @@
   };
 
   var filterByCheckbox = function (adsList) {
-
-    var checkboxesArray = Array.from(checkboxes);
-    var checkedElements = checkboxesArray.filter(function (checkbox) {
+    var checkedElements = Array.from(checkboxes).filter(function (checkbox) {
       return checkbox.checked;
     });
 
@@ -94,8 +94,22 @@
     return adsFinal;
   };
 
-  var filteredAds = function (data) {
+  var filteredByForm = function (data) {
     return filterByCheckbox(filterBySelect(data));
+  };
+
+  var filteredByQuantity = function (data) {
+    var byQuantityData = data;
+    if (byQuantityData.length > PINS_MAX_QUANTITY) {
+      byQuantityData = data.filter(function (objectelement, index) {
+        return index < PINS_MAX_QUANTITY;
+      });
+    }
+    return byQuantityData;
+  };
+
+  var filteredAds = function (data) {
+    return filteredByQuantity(filteredByForm(data));
   };
 
   var addFormChangeListener = function (data, callback) {
@@ -105,6 +119,7 @@
   };
 
   window.filters = {
-    addFormChangeListener: addFormChangeListener
+    addFormChangeListener: addFormChangeListener,
+    filteredByQuantity: filteredByQuantity
   };
 }());

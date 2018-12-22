@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var PINS_MAX_QUANTITY = 5;
   window.ESC_KEYCODE = 27;
 
   window.form.setAddress(window.map.getCoordinatePin());
@@ -10,9 +9,6 @@
     var pinFragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisingsTotal.length; i++) {
-      if (i === PINS_MAX_QUANTITY) {
-        break;
-      }
       var mapPinElement = window.createPin(advertisingsTotal[i]);
       setPinClick(mapPinElement, advertisingsTotal[i]);
       pinFragment.appendChild(mapPinElement);
@@ -22,8 +18,7 @@
 
   var setPinClick = function (element, pinObject) {
     element.addEventListener('click', function () {
-      var mapCard = window.map.map.querySelector('.map__card');
-      window.map.removeCard(mapCard);
+      window.map.removeCard();
       var card = window.createDescription(pinObject);
       window.map.renderDescription(card);
 
@@ -82,17 +77,23 @@
     window.form.setAddress(window.map.getCoordinatePin());
   });
 
-  var renderFilteredDataDebounce = window.debounce(function (filteredData) {
-    window.map.renderFilteredData(filteredData, createFragmentPins);
+  var onFormChange = window.debounce(function (totallData) {
+    window.map.removeCard();
+    window.map.clearMap();
+    window.map.renderPins(createFragmentPins(totallData));
   });
+
+  var quantityLimit = function (data) {
+    return window.filters.filteredByQuantity(data);
+  };
 
   var activatePage = function () {
     window.backend.load(function (receivedData) {
       window.form.setFormsState();
       window.map.changeMapStatus();
-      window.map.renderPins(createFragmentPins(receivedData));
-      window.filters.addFormChangeListener(receivedData, function (filteredData) {
-        renderFilteredDataDebounce(filteredData);
+      window.map.renderPins(createFragmentPins(quantityLimit(receivedData)));
+      window.filters.addFormChangeListener(receivedData, function (totallData) {
+        onFormChange(totallData);
       });
     }, onPageLoadError);
   };

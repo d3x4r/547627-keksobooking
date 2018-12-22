@@ -120,11 +120,11 @@
     }
   };
 
-  var renderFilteredData = function (data, createPinsCallback) {
-    removeCard();
-    clearMap();
-    renderPins(createPinsCallback(data));
-  };
+  // var renderFilteredData = function (data, createPinsCallback) {
+  //   removeCard();
+  //   clearMap();
+  //   renderPins(createPinsCallback(data));
+  // };
 
   var clearMap = function () {
     var pins = mapPinList.querySelectorAll('.map__pin--users');
@@ -162,6 +162,7 @@
   window.map = {
     map: map,
     removeCard: removeCard,
+    clearMap: clearMap,
     getCoordinatePin: getCoordinatePin,
     renderPins: renderPins,
     renderDescription: renderDescription,
@@ -169,7 +170,7 @@
     changeMapStatus: changeMapStatus,
     reset: reset,
     addMouseUpListener: addMouseUpListener,
-    putMainPinFocus: putMainPinFocus,
-    renderFilteredData: renderFilteredData
+    putMainPinFocus: putMainPinFocus
+    // renderFilteredData: renderFilteredData
   };
 })();
