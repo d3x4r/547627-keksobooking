@@ -10,16 +10,15 @@
 
     for (var i = 0; i < advertisingsTotal.length; i++) {
       var mapPinElement = window.createPin(advertisingsTotal[i]);
-      setPinClick(mapPinElement, advertisingsTotal[i]);
+      setPinClickListener(mapPinElement, advertisingsTotal[i]);
       pinFragment.appendChild(mapPinElement);
     }
     return pinFragment;
   };
 
-  var setPinClick = function (element, pinObject) {
+  var setPinClickListener = function (element, pinObject) {
     element.addEventListener('click', function () {
-      var mapCard = window.map.map.querySelector('.map__card');
-      window.map.removeCard(mapCard);
+      window.map.removeCard();
       var card = window.createDescription(pinObject);
       window.map.renderDescription(card);
 
@@ -47,12 +46,10 @@
   };
 
   var deactivatePage = function () {
-    window.form.resetForm();
-    window.form.setFormsState();
+    window.form.reset();
     window.map.reset();
     window.form.setAddress(window.map.getCoordinatePin());
-    window.map.putMainPinFocus();
-
+    document.activeElement.blur();
     window.map.addMouseUpListener(onMainPinMouseUp);
   };
 
@@ -69,11 +66,6 @@
     window.message.showError();
   };
 
-  // window.form.adForm.addEventListener('submit', function (event) {
-  //   window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
-  //   event.preventDefault();
-  // });
-  // window.form.addSubmitListener(window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError));
   var onFormSubmit = function (eventTarget) {
     window.backend.upload(new FormData(eventTarget), onFormUpload, onFormUploadError);
   };
@@ -83,19 +75,23 @@
     window.form.setAddress(window.map.getCoordinatePin());
   });
 
+  var onFormChange = window.debounce(function (totallData) {
+    window.map.clear();
+    window.map.renderPins(createFragmentPins(totallData));
+  });
+
   var activatePage = function () {
     window.backend.load(function (receivedData) {
-      window.form.setFormsState();
-      window.map.changeMapStatus();
-      window.map.renderPins(createFragmentPins(receivedData));
+      window.form.setState();
+      window.map.changeStatus();
+      window.map.renderPins(createFragmentPins(window.filters.getAdsData(receivedData)));
+      window.filters.addFormChangeListener(receivedData, function (totallData) {
+        onFormChange(totallData);
+      });
     }, onPageLoadError);
   };
 
   window.map.addMouseUpListener(onMainPinMouseUp);
   window.form.addResetListener(onResetButtonClick);
-  // window.form.resetPageButton.addEventListener('click', function (evt) {
-  //   deactivatePage();
-  //   evt.preventDefault();
-  // });
 })();
 
