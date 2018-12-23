@@ -16,44 +16,41 @@
     }
   };
 
-  var setFormsState = function () {
+  var setState = function () {
     setFormState(adForm);
     setFormState(mapForm);
   };
 
-  setFormsState();
+  setState();
 
   var setAddress = function (addressValue) {
     addressInput.value = addressValue;
   };
 
-  var addSubmitListener = function (callback) {
+  var addSubmitListener = function (onSubmit) {
     adForm.addEventListener('submit', function (evt) {
-      callback(evt.target);
+      onSubmit(evt.target);
       evt.preventDefault();
     });
   };
 
-  var addResetListener = function (callback) {
+  var addResetListener = function (onClick) {
     resetPageButton.addEventListener('click', function (evt) {
-      callback();
+      onClick();
       evt.preventDefault();
     });
   };
 
-  var resetForm = function () {
+  var reset = function () {
     adForm.reset();
+    setState();
   };
-  // adForm.addEventListener('submit', function (event) {
-  //   window.backend.upload(new FormData(window.form.adForm), onFormUpload, onFormUploadError);
-  //   event.preventDefault();
-  // });
 
   window.form = {
-    addSubmitListener: addSubmitListener,
-    resetForm: resetForm,
-    setFormsState: setFormsState,
+    reset: reset,
+    setState: setState,
     setAddress: setAddress,
+    addSubmitListener: addSubmitListener,
     addResetListener: addResetListener
   };
 })();

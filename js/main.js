@@ -10,13 +10,13 @@
 
     for (var i = 0; i < advertisingsTotal.length; i++) {
       var mapPinElement = window.createPin(advertisingsTotal[i]);
-      setPinClick(mapPinElement, advertisingsTotal[i]);
+      setPinClickListener(mapPinElement, advertisingsTotal[i]);
       pinFragment.appendChild(mapPinElement);
     }
     return pinFragment;
   };
 
-  var setPinClick = function (element, pinObject) {
+  var setPinClickListener = function (element, pinObject) {
     element.addEventListener('click', function () {
       window.map.removeCard();
       var card = window.createDescription(pinObject);
@@ -46,12 +46,10 @@
   };
 
   var deactivatePage = function () {
-    window.form.resetForm();
-    window.form.setFormsState();
+    window.form.reset();
     window.map.reset();
     window.form.setAddress(window.map.getCoordinatePin());
-    window.map.putMainPinFocus();
-
+    document.activeElement.blur();
     window.map.addMouseUpListener(onMainPinMouseUp);
   };
 
@@ -78,20 +76,15 @@
   });
 
   var onFormChange = window.debounce(function (totallData) {
-    window.map.removeCard();
-    window.map.clearMap();
+    window.map.clear();
     window.map.renderPins(createFragmentPins(totallData));
   });
 
-  var quantityLimit = function (data) {
-    return window.filters.filteredByQuantity(data);
-  };
-
   var activatePage = function () {
     window.backend.load(function (receivedData) {
-      window.form.setFormsState();
-      window.map.changeMapStatus();
-      window.map.renderPins(createFragmentPins(quantityLimit(receivedData)));
+      window.form.setState();
+      window.map.changeStatus();
+      window.map.renderPins(createFragmentPins(window.filters.getAdsData(receivedData)));
       window.filters.addFormChangeListener(receivedData, function (totallData) {
         onFormChange(totallData);
       });

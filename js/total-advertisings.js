@@ -6,7 +6,6 @@
   var MAX_PRICE = 1000000;
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
-  // Переменная, которая отображает необходимое количество обьектов для меток обьявлений и хранит в себе длинну массивов для генерации такого количества обьектов.
   var NUMBERS_OF_ADS = 8;
 
   var titles = [
@@ -48,7 +47,6 @@
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
 
-  // Генерация упорядоченного массива с аватарами пользователей
   var getAvatarList = function (avatarCount) {
     var avatarList = [];
     for (var i = 1; i <= avatarCount; i++) {
@@ -58,7 +56,6 @@
   };
   var avatars = getAvatarList(NUMBERS_OF_ADS);
 
-  // Функция для перемешивания массива в случайном порядке
   var getRandomArray = function (array) {
     var copyArray = array.slice();
     var arrRandoms = [];
@@ -70,7 +67,6 @@
     return arrRandoms;
   };
 
-  // Функция для получение случайного числа в диапазоне min-max, необходима для генерации случайных длинн массивов
   var getRandomInteger = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -79,12 +75,10 @@
   var randomTitles = getRandomArray(titles);
   var randomFeatures = getRandomArray(features);
 
-  // Создание массива длинны -number, на основе входящего массива -Array
   var getRandomLengthArr = function (array) {
     return array.slice(0, getRandomInteger(1, array.length));
   };
 
-  // Фунция для создания массива arrayValue-длинны, состоящего из сгенерированных обьектов
   var getAdList = function (arrayValue) {
 
     var advertisings = [];
@@ -122,6 +116,5 @@
     return advertisings;
   };
 
-  // Генерация итогового массива arrayLength-длинны, который состоит из обьектов
   window.totalAdvertisings = getAdList(NUMBERS_OF_ADS);
 })();

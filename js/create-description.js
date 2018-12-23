@@ -1,12 +1,10 @@
 'use strict';
 
 (function () {
-  // Поиск в разметке шаблона модального окна с информацией об обьявлении
   var mapTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
 
-  // Функция вывода значений на русском языке в блоке type
   var getTypeRussian = function (type) {
     var russianType = 'Дом';
     if (type === 'palace') {
@@ -19,7 +17,6 @@
     return russianType;
   };
 
-  // Функция перемешивания массива в случайном порядке
   var shuffleArray = function (array) {
     for (var i = 0; i < array.length; i++) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -53,13 +50,11 @@
     }
     return photosFragment;
   };
-  // Создание фрагмента карточки обьявления, на основе одного обьекта из итогового массива с индексом -position
+
   var createDescription = function (totalAd) {
 
-    // Копирование шаблона модального окна
     var cardElement = mapTemplate.cloneNode(true);
 
-    // Поиск элементов в разметке шаблона и добавление этим элементам значений обьекта
     if (totalAd.offer.title) {
       cardElement.querySelector('.popup__title').textContent = totalAd.offer.title;
     } else {
@@ -97,7 +92,7 @@
     }
 
     var featuresContainer = cardElement.querySelector('.popup__features');
-    // Удаление дочерних элементов блока popup__features в разметке с целью добавления сгенерированных данных
+
     featuresContainer.innerHTML = '';
 
     if (totalAd.offer.features.length > 0) {

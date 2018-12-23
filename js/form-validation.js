@@ -6,8 +6,6 @@
   var PRICE_HOUSE = 5000;
   var PRICE_PALACE = 10000;
 
-
-  // Поиск полей ввода в разметке
   var type = document.getElementById('type');
   var price = document.getElementById('price');
   var timeIn = document.getElementById('timein');
@@ -27,17 +25,16 @@
     price.min = value;
     price.placeholder = value;
   });
-  // Синхронизация времени заезда и выезда
-  var timeSyncInputs = function (inputFirst, inputSecond) {
+
+  var addInputListener = function (inputFirst, inputSecond) {
     inputFirst.addEventListener('input', function () {
       inputSecond.value = inputFirst.value;
     });
   };
-  timeSyncInputs(timeIn, timeOut);
-  timeSyncInputs(timeOut, timeIn);
+  addInputListener(timeIn, timeOut);
+  addInputListener(timeOut, timeIn);
 
-  // Функция синхронизация гостей и комнат
-  var guestSync = function (targetInput) {
+  var addChangeListener = function (targetInput) {
     targetInput.addEventListener('change', function () { // не blur, a change
       var capacityInt = parseInt(capacity.value, 10);
       var roomInt = parseInt(roomNumber.value, 10);
@@ -54,6 +51,6 @@
     });
   };
 
-  guestSync(roomNumber);
-  guestSync(capacity);
+  addChangeListener(roomNumber);
+  addChangeListener(capacity);
 })();
