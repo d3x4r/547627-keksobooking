@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   var ADS_DATA_URL = 'https://js.dump.academy/keksobooking/data';
-  var UPLOAD_AD_URL = 'https://js.dump.academy/kekso1booking';
+  var UPLOAD_AD_URL = 'https://js.dump.academy/keksobooking';
 
   var createXhr = function (method, url) {
     var xhr = new XMLHttpRequest();
