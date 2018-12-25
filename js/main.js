@@ -5,12 +5,12 @@
 
   window.form.setAddress(window.map.getCoordinatePin());
 
-  var createFragmentPins = function (advertisingsTotal) {
+  var createFragmentPins = function (ads) {
     var pinFragment = document.createDocumentFragment();
 
-    for (var i = 0; i < advertisingsTotal.length; i++) {
-      var mapPinElement = window.createPin(advertisingsTotal[i]);
-      setPinClickListener(mapPinElement, advertisingsTotal[i]);
+    for (var i = 0; i < ads.length; i++) {
+      var mapPinElement = window.createPin(ads[i]);
+      setPinClickListener(mapPinElement, ads[i]);
       pinFragment.appendChild(mapPinElement);
     }
     return pinFragment;
