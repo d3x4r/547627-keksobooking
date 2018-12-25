@@ -16,6 +16,8 @@
     }
   };
 
+  window.applyAttachment(adForm);
+
   var setState = function () {
     setFormState(adForm);
     setFormState(mapForm);
@@ -41,7 +43,12 @@
     });
   };
 
+  var resetAttachment = function () {
+    window.applyAttachment(adForm);
+  };
+
   var reset = function () {
+    resetAttachment();
     adForm.reset();
     setState();
   };
