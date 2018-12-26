@@ -1,8 +1,5 @@
 'use strict';
-
 (function () {
-  window.ESC_KEYCODE = 27;
-
   window.form.setAddress(window.map.getCoordinatePin());
 
   var createFragmentPins = function (ads) {
@@ -18,7 +15,7 @@
 
   var setPinClickListener = function (element, pinObject) {
     element.addEventListener('click', function () {
-      window.map.removeCard();
+      window.map.removeDescription();
       var card = window.createDescription(pinObject);
       window.map.renderDescription(card);
 
@@ -28,7 +25,7 @@
       });
 
       var onButtonKeydown = function (evt) {
-        if (evt.keyCode === window.ESC_KEYCODE) {
+        if (evt.keyCode === window.utils.ESC_KEYCODE) {
           card.remove();
           document.removeEventListener('keydown', onButtonKeydown);
         }
@@ -83,7 +80,8 @@
   var activatePage = function () {
     window.backend.load(function (receivedData) {
       window.form.setState();
-      window.map.changeStatus();
+      window.filters.setState();
+      window.map.changeState();
       window.map.renderPins(createFragmentPins(window.filters.getAdsData(receivedData)));
       window.filters.addFormChangeListener(receivedData, function (totallData) {
         onFormChange(totallData);

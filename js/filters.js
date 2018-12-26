@@ -1,17 +1,18 @@
 'use strict';
 (function () {
-  var MIN_PRICE_VALUE = 10000;
-  var MAX_PRICE_VALUE = 50000;
-  var MAX_PIN_NUMBER = 5;
-
   var filtersForm = document.querySelector('.map__filters');
   var checkboxes = Array.from(filtersForm.querySelectorAll('[type=checkbox]'));
 
-  var adTypeSelect = document.querySelector('#housing-type');
-  var adPriceSelect = document.querySelector('#housing-price');
-  var adRoomSelect = document.querySelector('#housing-rooms');
-  var adGuestSelect = document.querySelector('#housing-guests');
+  var adTypeSelect = filtersForm.querySelector('#housing-type');
+  var adPriceSelect = filtersForm.querySelector('#housing-price');
+  var adRoomSelect = filtersForm.querySelector('#housing-rooms');
+  var adGuestSelect = filtersForm.querySelector('#housing-guests');
 
+  var setState = function () {
+    window.utils.setFormState(filtersForm);
+  };
+
+  setState();
 
   var isTypeMatch = function (ad) {
     switch (adTypeSelect.value) {
@@ -29,13 +30,13 @@
         return true;
 
       case 'middle':
-        return ad.offer.price >= MIN_PRICE_VALUE && ad.offer.price <= MAX_PRICE_VALUE;
+        return ad.offer.price >= window.utils.MIN_PRICE_VALUE && ad.offer.price <= window.utils.MAX_PRICE_VALUE;
 
       case 'low':
-        return ad.offer.price < MIN_PRICE_VALUE;
+        return ad.offer.price < window.utils.MIN_PRICE_VALUE;
 
       default:
-        return ad.offer.price > MAX_PRICE_VALUE;
+        return ad.offer.price > window.utils.MAX_PRICE_VALUE;
     }
   };
 
@@ -84,7 +85,7 @@
         isFeaturesMatch(requiredFeatures)(item);
     });
 
-    return filteredPins.length > MAX_PIN_NUMBER ? filteredPins.slice(0, MAX_PIN_NUMBER) : filteredPins;
+    return filteredPins.length > window.utils.MAX_PIN_NUMBER ? filteredPins.slice(0, window.utils.MAX_PIN_NUMBER) : filteredPins;
   };
 
   var addFormChangeListener = function (data, callback) {
@@ -93,10 +94,10 @@
     });
   };
 
-
   window.filters = {
     addFormChangeListener: addFormChangeListener,
-    getAdsData: getAdsData
+    getAdsData: getAdsData,
+    setState: setState
   };
 }()
 );

@@ -1,26 +1,14 @@
 'use strict';
-
 (function () {
-
   var adForm = document.querySelector('.ad-form');
-  var mapForm = document.querySelector('.map__filters');
   var resetPageButton = document.querySelector('.ad-form__reset');
-
   var addressInput = adForm.querySelector('[name="address"]');
 
-  var setFormState = function (form) {
-    form.classList.toggle(form.id + '--disabled');
-    var formElements = form.querySelectorAll('#' + form.id + ' > *');
-    for (var i = 0; i < formElements.length; i++) {
-      formElements[i].disabled = !formElements[i].disabled;
-    }
-  };
-
   window.applyAttachment(adForm);
+  window.activateValidation(adForm);
 
   var setState = function () {
-    setFormState(adForm);
-    setFormState(mapForm);
+    window.utils.setFormState(adForm);
   };
 
   setState();

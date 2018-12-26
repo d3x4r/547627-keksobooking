@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var successFormTemplate = document.querySelector('#success')
   .content
@@ -18,7 +17,7 @@
     });
 
     var onMessageClose = function (evtESC) {
-      if (evtESC.keyCode === window.ESC_KEYCODE) {
+      if (evtESC.keyCode === window.utils.ESC_KEYCODE) {
         document.body.removeChild(successWindow);
         document.removeEventListener('keydown', onMessageClose);
       }
@@ -38,7 +37,7 @@
     });
 
     var onErrorClose = function (evtESC) {
-      if (evtESC.keyCode === window.ESC_KEYCODE) {
+      if (evtESC.keyCode === window.utils.ESC_KEYCODE) {
         document.body.removeChild(failWindow);
         document.removeEventListener('keydown', onErrorClose);
       }
