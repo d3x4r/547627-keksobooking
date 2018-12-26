@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   window.applyAttachment = function (form) {
     var avatarChoser = form.querySelector('#avatar');
     var avatarPreview = form.querySelector('.ad-form-header__preview').children[0];
@@ -41,12 +40,13 @@
         onLoad(reader);
       });
     };
+
     var addChangePhotoListener = function (photoChoser, onLoad) {
       photoChoser.addEventListener('change', function () {
         var photo = photoChoser.files[0];
         var photoName = photoChoser.files[0].name;
 
-        var matches = FILE_TYPES.some(function (it) {
+        var matches = window.utils.FILE_TYPES.some(function (it) {
           return photoName.endsWith(it);
         });
 
@@ -85,6 +85,7 @@
     addChangePhotoListener(housePhotoChoser, function (reader) {
       onLoad(reader);
     });
+
     return clear();
   };
 }());
