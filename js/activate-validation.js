@@ -30,7 +30,7 @@
     addInputListener(timeOut, timeIn);
 
     var addChangeListener = function (targetInput) {
-      targetInput.addEventListener('change', function () { // не blur, a change
+      targetInput.addEventListener('change', function () {
         var capacityInt = parseInt(capacity.value, 10);
         var roomInt = parseInt(roomNumber.value, 10);
         if (capacityInt > roomInt && capacityInt > 0) {
