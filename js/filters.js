@@ -15,13 +15,7 @@
   setState();
 
   var isTypeMatch = function (ad) {
-    switch (adTypeSelect.value) {
-      case 'any':
-        return true;
-
-      default:
-        return ad.offer.type === adTypeSelect.value;
-    }
+    return (adTypeSelect.value === 'any') ? true : ad.offer.type === adTypeSelect.value;
   };
 
   var isPriceMatch = function (ad) {
@@ -41,23 +35,11 @@
   };
 
   var isRoomsMatch = function (ad) {
-    switch (adRoomSelect.value) {
-      case 'any':
-        return true;
-
-      default:
-        return ad.offer.rooms === +adRoomSelect.value;
-    }
+    return (adRoomSelect.value === 'any') ? true : ad.offer.rooms === +adRoomSelect.value;
   };
 
   var isGuestMatch = function (ad) {
-    switch (adGuestSelect.value) {
-      case 'any':
-        return true;
-
-      default:
-        return ad.offer.guests === +adGuestSelect.value;
-    }
+    return (adGuestSelect.value === 'any') ? true : ad.offer.guests === +adGuestSelect.value;
   };
 
   var isFeaturesMatch = function (requiredFeatures) {
