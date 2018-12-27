@@ -4,49 +4,34 @@
     .content
     .querySelector('.map__card');
 
-  var getTypeRussian = function (type) {
-    var russianType = 'Дом';
-    if (type === 'palace') {
-      russianType = 'Дворец';
-    } else if (type === 'flat') {
-      russianType = 'Квартира';
-    } else if (type === 'bungalo') {
-      russianType = 'Бунгало';
-    }
-    return russianType;
-  };
-
-  var shuffleArray = function (array) {
-    for (var i = 0; i < array.length; i++) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
+  var russianHousingTypeMap = {
+    palace: 'Дворец',
+    flat: 'Квартира',
+    bungalo: 'Бунгало',
+    house: 'Дом'
   };
 
   var getFeaturesFragment = function (featursList) {
     var featuresFragment = document.createDocumentFragment();
-    for (var j = 0; j < featursList.offer.features.length; j++) {
+
+    featursList.offer.features.forEach(function (item, index) {
       var newElement = document.createElement('li');
       newElement.classList.add('popup__feature');
-      newElement.classList.add('popup__feature--' + featursList.offer.features[j]);
+      newElement.classList.add('popup__feature--' + featursList.offer.features[index]);
       featuresFragment.appendChild(newElement);
-    }
+    });
     return featuresFragment;
   };
 
   var getPhotosFragment = function (photosList, photoPlace) {
     var photosFragment = document.createDocumentFragment();
-    var shufflePhotos = shuffleArray(photosList.offer.photos);
     var photoTemplate = photoPlace.querySelector('.popup__photo');
 
-    for (var k = 0; k < photosList.offer.photos.length; k++) {
+    photosList.offer.photos.forEach(function (item) {
       var photo = photoTemplate.cloneNode(true);
-      photo.src = shufflePhotos[k];
+      photo.src = item;
       photosFragment.appendChild(photo);
-    }
+    });
     return photosFragment;
   };
 
@@ -72,8 +57,9 @@
       cardElement.removeChild(cardElement.querySelector('.popup__text--price'));
     }
 
+
     if (totalAd.offer.type) {
-      cardElement.querySelector('.popup__type').textContent = getTypeRussian(totalAd.offer.type);
+      cardElement.querySelector('.popup__type').textContent = russianHousingTypeMap[totalAd.offer.type];
     } else {
       cardElement.removeChild(cardElement.querySelector('.popup__type'));
     }

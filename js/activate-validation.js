@@ -31,13 +31,13 @@
 
     var addChangeListener = function (targetInput) {
       targetInput.addEventListener('change', function () {
-        var capacityInt = parseInt(capacity.value, 10);
+        var capacityNumber = parseInt(capacity.value, 10);
         var roomInt = parseInt(roomNumber.value, 10);
-        if (capacityInt > roomInt && capacityInt > 0) {
+        if (capacityNumber > roomInt && capacityNumber > 0) {
           targetInput.setCustomValidity('Количество гостей не должно превышать количество комнат');
-        } else if (roomInt === 100 && capacityInt > 0) {
+        } else if (roomInt === 100 && capacityNumber > 0) {
           targetInput.setCustomValidity('100 комнат сдается не для гостей');
-        } else if (roomInt !== 100 && capacityInt === 0) {
+        } else if (roomInt !== 100 && capacityNumber === 0) {
           targetInput.setCustomValidity('Выбирете количество гостей');
         } else {
           roomNumber.setCustomValidity('');
